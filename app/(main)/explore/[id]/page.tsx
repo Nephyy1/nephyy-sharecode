@@ -28,7 +28,8 @@ export default async function SnippetDetailPage({ params }: { params: { id: stri
     notFound();
   }
 
-  const userInitial = snippet.profiles?.full_name?.charAt(0).toUpperCase() || 'U';
+  const profile = Array.isArray(snippet.profiles) ? snippet.profiles[0] : snippet.profiles;
+  const userInitial = profile?.full_name?.charAt(0).toUpperCase() || 'U';
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -38,10 +39,10 @@ export default async function SnippetDetailPage({ params }: { params: { id: stri
             <CardTitle className="text-3xl font-bold tracking-tight">{snippet.title}</CardTitle>
             <div className="flex items-center gap-3 pt-2 text-sm text-muted-foreground">
               <Avatar className="w-8 h-8">
-                <AvatarImage src={snippet.profiles?.avatar_url} />
+                <AvatarImage src={profile?.avatar_url} />
                 <AvatarFallback>{userInitial}</AvatarFallback>
               </Avatar>
-              <span>{snippet.profiles?.full_name || 'Anonymous'}</span>
+              <span>{profile?.full_name || 'Anonymous'}</span>
               <span>•</span>
               <span>{formatDistanceToNow(new Date(snippet.created_at), { addSuffix: true })}</span>
             </div>
@@ -58,7 +59,6 @@ export default async function SnippetDetailPage({ params }: { params: { id: stri
         
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Comments</h2>
-          {/* Komponen interaktif untuk vote dan comment akan ditambahkan di langkah berikutnya */}
         </div>
       </div>
     </div>
