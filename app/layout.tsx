@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const manrope = Manrope({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -10,15 +11,15 @@ export const metadata: Metadata = {
   description: "The ultimate platform for developers to share code snippets, engage in live coding sessions, and get AI-powered feedback. Built by Nephyy.",
   authors: [{ name: "Nephyy" }],
   keywords: ["code sharing", "live coding", "pair programming", "AI code review", "developer tools", "Nephyy"],
-  metadataBase: new URL('https://your-production-url.com'), // Ganti dengan URL produksi Anda
+  metadataBase: new URL('https://your-production-url.com'),
   openGraph: {
     title: "Nephyy ShareCode",
     description: "Share, Collaborate, and Review Code with AI.",
-    url: "https://your-production-url.com", // Ganti dengan URL produksi Anda
+    url: "https://your-production-url.com",
     siteName: "Nephyy ShareCode",
     images: [
       {
-        url: "/og-image.png", // Buat dan letakkan gambar ini di folder /public
+        url: "/og-image.png",
         width: 1200,
         height: 630,
       },
@@ -51,6 +52,7 @@ export default function RootLayout({
           <main className="flex-grow container mx-auto py-6 sm:py-10">
             {children}
           </main>
+          <Footer />
         </div>
       </body>
     </html>
