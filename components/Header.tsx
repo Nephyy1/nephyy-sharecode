@@ -38,8 +38,12 @@ export default function Header() {
             <></>
           ) : (
             <>
-              <Button variant="outline">Login</Button>
-              <Button className="btn-gradient shadow-subtle hover:shadow-subtle-hover">Register</Button>
+              <Button variant="outline" asChild>
+                <Link href="/login">Login</Link>
+              </Button>
+              <Button className="btn-gradient shadow-subtle hover:shadow-subtle-hover" asChild>
+                <Link href="/register">Register</Link>
+              </Button>
             </>
           )}
         </div>
@@ -72,8 +76,16 @@ export default function Header() {
                     <></>
                   ) : (
                     <>
-                      <Button variant="outline">Login</Button>
-                      <Button className="btn-gradient">Register</Button>
+                      <SheetClose asChild>
+                        <Button variant="outline" asChild>
+                          <Link href="/login">Login</Link>
+                        </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button className="btn-gradient" asChild>
+                          <Link href="/register">Register</Link>
+                        </Button>
+                      </SheetClose>
                     </>
                   )}
                 </div>
