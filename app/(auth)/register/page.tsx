@@ -9,8 +9,6 @@ import { CheckCircle, Github, LoaderCircle, Lock, Mail, User } from 'lucide-reac
 import Link from 'next/link';
 import { useState } from 'react';
 
-export const dynamic = 'force-dynamic';
-
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,7 +16,6 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const supabase = createClient();
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,6 +23,7 @@ export default function RegisterPage() {
     setError(null);
     setSuccess(null);
 
+    const supabase = createClient();
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
