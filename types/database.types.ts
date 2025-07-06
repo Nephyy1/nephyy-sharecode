@@ -95,6 +95,7 @@ export type Database = {
           id: string
           is_public: boolean
           language: string
+          short_id: string | null
           title: string
           user_id: string
         }
@@ -105,6 +106,7 @@ export type Database = {
           id?: string
           is_public?: boolean
           language: string
+          short_id?: string | null
           title: string
           user_id: string
         }
@@ -115,6 +117,7 @@ export type Database = {
           id?: string
           is_public?: boolean
           language?: string
+          short_id?: string | null
           title?: string
           user_id?: string
         }
