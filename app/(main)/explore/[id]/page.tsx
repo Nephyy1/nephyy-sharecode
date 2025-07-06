@@ -1,0 +1,66 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { createClient } from "@/lib/supabase/server";
+import { notFound } from "next/navigation";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { formatDistanceToNow } from 'date-fns';
+
+export default async function SnippetDetailPage({ params }: { params: { id: string } }) {
+  const supabase = createClient();
+
+  const { data: snippet } = await supabase
+    .from('snippets')
+    .select(`
+      id,
+      title,
+      description,
+      language,
+      code,
+      created_at,
+      profiles ( id, full_name, avatar_url )
+    `)
+    .eq('id', params.id)
+    .single();
+
+  if (!snippet) {
+    notFound();
+  }
+
+  const userInitial = snippet.profiles?.full_name?.charAt(0).toUpperCase() || 'U';
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto">
+        <Card className="shadow-subtle">
+          <CardHeader>
+            <CardTitle className="text-3xl font-bold tracking-tight">{snippet.title}</CardTitle>
+            <div className="flex items-center gap-3 pt-2 text-sm text-muted-foreground">
+              <Avatar className="w-8 h-8">
+                <AvatarImage src={snippet.profiles?.avatar_url} />
+                <AvatarFallback>{userInitial}</AvatarFallback>
+              </Avatar>
+              <span>{snippet.profiles?.full_name || 'Anonymous'}</span>
+              <span>•</span>
+              <span>{formatDistanceToNow(new Date(snippet.created_at), { addSuffix: true })}</span>
+            </div>
+            <CardDescription className="pt-4 text-base">{snippet.description}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-lg overflow-hidden bg-[#1E1E1E]">
+              <SyntaxHighlighter language={snippet.language.toLowerCase()} style={vscDarkPlus} showLineNumbers>
+                {snippet.code}
+              </SyntaxHighlighter>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Comments</h2>
+          {/* Komponen interaktif untuk vote dan comment akan ditambahkan di langkah berikutnya */}
+        </div>
+      </div>
+    </div>
+  );
+}
