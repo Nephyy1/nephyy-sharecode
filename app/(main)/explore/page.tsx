@@ -12,6 +12,7 @@ export default async function ExplorePage() {
     .select(`
       id,
       title,
+      short_id,
       description,
       language,
       created_at,
@@ -45,7 +46,7 @@ export default async function ExplorePage() {
             <CardFooter className="flex justify-between items-center text-sm text-muted-foreground border-t pt-4">
               <span>{formatDistanceToNow(new Date(snippet.created_at), { addSuffix: true })}</span>
               <Button asChild variant="secondary" size="sm">
-                <Link href={`/explore/${snippet.id}`}>View Snippet</Link>
+                <Link href={`/s/${snippet.short_id}`}>View Snippet</Link>
               </Button>
             </CardFooter>
           </Card>
