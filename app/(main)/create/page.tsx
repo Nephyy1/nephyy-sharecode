@@ -22,25 +22,23 @@ export default function CreatePage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [isMounted, setIsMounted] = useState(false);
 
   const supabase = createClient();
   const router = useRouter();
 
   useEffect(() => {
-    setIsMounted(true);
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/login?message=You must be logged in to create a snippet.');
+      }
       setUser(user);
     };
     fetchUser();
-  }, [supabase.auth]);
+  }, [router, supabase.auth]);
 
   const handleSaveSnippet = async (isPublic: boolean) => {
-    if (isPublic && !user) {
-      setError("You must be logged in to publish a snippet.");
-      return;
-    }
+    if (!user) return; 
 
     if (!title || !language || !code) {
       setError("Title, Language, and Code fields are required.");
@@ -60,7 +58,7 @@ export default function CreatePage() {
         description,
         language,
         code,
-        user_id: user?.id || null,
+        user_id: user.id,
         is_public: isPublic,
         short_id: shortId,
       })
@@ -71,12 +69,12 @@ export default function CreatePage() {
     if (insertError) {
       setError(insertError.message);
     } else if (data) {
-      setSuccess(isPublic ? "Snippet published successfully!" : "Link created successfully!");
+      setSuccess(isPublic ? "Snippet published!" : "Link created!");
       router.push(`/s/${data.short_id}`);
     }
   };
   
-  if (!isMounted) {
+  if (!user) {
     return (
       <div className="flex justify-center items-center py-12">
         <LoaderCircle className="w-8 h-8 animate-spin" />
@@ -140,7 +138,7 @@ export default function CreatePage() {
               {isLoading ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : <Link2 className="mr-2 h-4 w-4" />}
               Create Share Link
             </Button>
-            <Button type="button" size="lg" className="btn-gradient" onClick={() => handleSaveSnippet(true)} disabled={isLoading || !user}>
+            <Button type="button" size="lg" className="btn-gradient" onClick={() => handleSaveSnippet(true)} disabled={isLoading}>
               {isLoading ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
               Publish to Web
             </Button>
