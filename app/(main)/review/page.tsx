@@ -12,12 +12,14 @@ export default function ReviewPage() {
   const [result, setResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [hasAnalyzed, setHasAnalyzed] = useState(false);
 
   const handleAnalyze = async () => {
     if (!code.trim()) {
       setError("Please paste some code to analyze.");
       return;
     }
+    setHasAnalyzed(true);
     setIsLoading(true);
     setResult("");
     setError("");
@@ -63,7 +65,7 @@ export default function ReviewPage() {
           />
         </CardContent>
         <CardFooter>
-          <Button onClick={handleAnalyze} disabled={isLoading} className="btn-gradient w-full sm:w-auto">
+          <Button onClick={handleAnalyze} disabled={isLoading || !code} className="btn-gradient w-full sm:w-auto">
             {isLoading ? (
               <>
                 <LoaderCircle className="w-4 h-4 mr-2 animate-spin" />
@@ -79,27 +81,24 @@ export default function ReviewPage() {
         </CardFooter>
       </Card>
       
-      <Card className="shadow-subtle">
-        <CardHeader>
-          <CardTitle>Analysis Result</CardTitle>
-          <CardDescription>Suggestions from Gemini will appear here.</CardDescription>
-        </CardHeader>
-        <CardContent className="min-h-[400px]">
-          {isLoading && (
-            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-              <LoaderCircle className="w-8 h-8 animate-spin mb-4" />
-              <p>Contacting AI assistant...</p>
-            </div>
-          )}
-          {error && <p className="text-destructive">{error}</p>}
-          {result && <MarkdownRenderer content={result} />}
-          {!isLoading && !result && !error && (
-            <div className="flex items-center justify-center h-full text-center text-muted-foreground">
-              <p>Your code analysis will be displayed here.</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {hasAnalyzed && (
+        <Card className="shadow-subtle">
+          <CardHeader>
+            <CardTitle>Analysis Result</CardTitle>
+            <CardDescription>Suggestions from Gemini will appear here.</CardDescription>
+          </CardHeader>
+          <CardContent className="min-h-[400px]">
+            {isLoading && (
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                <LoaderCircle className="w-8 h-8 animate-spin mb-4" />
+                <p>Contacting AI assistant...</p>
+              </div>
+            )}
+            {error && <p className="text-destructive">{error}</p>}
+            {result && <MarkdownRenderer content={result} />}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
