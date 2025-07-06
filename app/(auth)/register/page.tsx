@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CheckCircle, LoaderCircle, Lock, Mail, User } from 'lucide-react';
+import { CheckCircle, Github, LoaderCircle, Lock, Mail, User } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -83,6 +83,18 @@ export default function RegisterPage() {
             <Button type="submit" className="w-full mt-6 btn-gradient text-base" disabled={isLoading}>
               {isLoading && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
               Create Account
+            </Button>
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+              </div>
+            </div>
+            <Button variant="outline" className="w-full">
+              <Github className="mr-2 h-4 w-4" />
+              Sign up with GitHub
             </Button>
           </form>
         </CardContent>
