@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CodeXml, Menu, FilePlus2, Radio, WandSparkles, LogOut, User as UserIcon, Settings } from 'lucide-react';
+import { CodeXml, Menu, FilePlus2, Radio, WandSparkles, LogOut, User as UserIcon, Settings, Compass } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { createClient } from '@/lib/supabase/client';
 import { UserNav } from './UserNav';
@@ -56,6 +56,7 @@ export default function Header() {
 
 
   const navItems = [
+    { href: "/explore", label: "Explore", icon: <Compass className="w-5 h-5" /> },
     { href: "/create", label: "Create", icon: <FilePlus2 className="w-5 h-5" /> },
     { href: "/live", label: "Live", icon: <Radio className="w-5 h-5" /> },
     { href: "/review", label: "Review", icon: <WandSparkles className="w-5 h-5" /> },
