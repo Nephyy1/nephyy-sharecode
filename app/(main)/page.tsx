@@ -1,13 +1,19 @@
 import { Button } from "@/components/ui/button";
-import { CodeXml, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function LandingPage() {
   return (
     <div className="flex flex-col items-center justify-center text-center px-4 py-16 sm:py-24">
-      <div className="p-4 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl text-white inline-block mb-6 shadow-lg">
-        <CodeXml className="w-10 h-10" />
-      </div>
+      <Image
+        src="/nephyy.png"
+        alt="Nephyy ShareCode Logo"
+        width={110}
+        height={110}
+        className="mb-6 rounded-2xl shadow-lg"
+        priority
+      />
       <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter max-w-2xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700">
         Share, Collaborate, and Review Code Instantly
       </h1>
