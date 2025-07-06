@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
+import { nanoid } from "nanoid";
 
 export default function CreatePage() {
   const [title, setTitle] = useState('');
@@ -53,6 +54,8 @@ export default function CreatePage() {
     setError(null);
     setSuccess(null);
 
+    const shortId = nanoid(8);
+
     const { data, error: insertError } = await supabase
       .from('snippets')
       .insert({
@@ -62,8 +65,9 @@ export default function CreatePage() {
         code,
         user_id: user.id,
         is_public: isPublic,
+        short_id: shortId,
       })
-      .select('id')
+      .select('short_id')
       .single();
 
     setIsLoading(false);
@@ -71,7 +75,7 @@ export default function CreatePage() {
       setError(insertError.message);
     } else if (data) {
       setSuccess(isPublic ? "Snippet published successfully!" : "Link created successfully!");
-      router.push(`/explore/${data.id}`);
+      router.push(`/s/${data.short_id}`);
     }
   };
   
