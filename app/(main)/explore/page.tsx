@@ -1,20 +1,24 @@
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUp, MessageSquare, Code2 } from "lucide-react";
+import { Code2 } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from 'date-fns';
 
 export default async function ExplorePage() {
   const supabase = createClient();
-  const { data: snippets } = await supabase.from('snippets').select(`
-    id,
-    title,
-    description,
-    language,
-    created_at,
-    profiles ( id, full_name, avatar_url )
-  `).order('created_at', { ascending: false });
+  const { data: snippets } = await supabase
+    .from('snippets')
+    .select(`
+      id,
+      title,
+      description,
+      language,
+      created_at,
+      profiles ( id, full_name, avatar_url )
+    `)
+    .eq('is_public', true)
+    .order('created_at', { ascending: false });
 
   return (
     <div className="container mx-auto px-4 py-8">
