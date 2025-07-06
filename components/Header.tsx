@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { CodeXml, Menu, FilePlus2, Radio, WandSparkles } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle';
 
 export default function Header() {
   const isLoggedIn = false;
@@ -32,6 +33,7 @@ export default function Header() {
         </nav>
 
         <div className="hidden md:flex items-center gap-2 ml-auto">
+          <ThemeToggle />
           {isLoggedIn ? (
             <></>
           ) : (
@@ -42,7 +44,8 @@ export default function Header() {
           )}
         </div>
 
-        <div className="md:hidden ml-auto">
+        <div className="md:hidden ml-auto flex items-center gap-2">
+          <ThemeToggle />
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon">
