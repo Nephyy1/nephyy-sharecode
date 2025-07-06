@@ -40,7 +40,7 @@ export default function ReviewPage() {
       const data = await response.json();
       setResult(data.result);
 
-    } catch (err: any) {
+    } catch (err: any)      {
       setError("Failed to get review. Please try again later.");
       console.error(err);
     } finally {
@@ -87,7 +87,7 @@ export default function ReviewPage() {
             <CardTitle>Analysis Result</CardTitle>
             <CardDescription>Suggestions from Gemini will appear here.</CardDescription>
           </CardHeader>
-          <CardContent className="min-h-[400px]">
+          <CardContent className="min-h-[400px] overflow-x-auto">
             {isLoading && (
               <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                 <LoaderCircle className="w-8 h-8 animate-spin mb-4" />
