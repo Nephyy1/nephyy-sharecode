@@ -2,7 +2,13 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const genAI = new GoogleGenerativeAI(process.env.AI_APIKEY as string);
+  const apiKey = process.env.AI_APIKEY;
+
+  if (!apiKey) {
+    return NextResponse.json({ error: "AI_APIKEY is not configured on the server." }, { status: 500 });
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   try {
@@ -24,7 +30,7 @@ export async function POST(req: NextRequest) {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    
+
     return NextResponse.json({ result: text });
 
   } catch (error) {
