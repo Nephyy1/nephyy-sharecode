@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
+import { nanoid } from "nanoid";
 
 export default function CreatePage() {
   const [title, setTitle] = useState('');
@@ -21,11 +22,13 @@ export default function CreatePage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   const supabase = createClient();
   const router = useRouter();
 
   useEffect(() => {
+    setIsMounted(true);
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
@@ -72,6 +75,14 @@ export default function CreatePage() {
       router.push(`/s/${data.short_id}`);
     }
   };
+  
+  if (!isMounted) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <LoaderCircle className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center items-start">
