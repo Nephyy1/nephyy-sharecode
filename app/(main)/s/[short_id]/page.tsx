@@ -21,6 +21,7 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
       language,
       code,
       created_at,
+      is_public,
       profiles ( full_name, avatar_url )
     `)
     .eq('short_id', params.short_id)
@@ -42,15 +43,22 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
         </div>
         <Card className="shadow-subtle">
           <CardHeader>
-            <div className="flex items-center gap-3 text-sm text-muted-foreground">
-              <Avatar className="w-8 h-8">
-                <AvatarImage src={profile?.avatar_url || ''} />
-                <AvatarFallback>{userInitial}</AvatarFallback>
-              </Avatar>
-              <span>{profile?.full_name || 'Anonymous'}</span>
-              <span>•</span>
-              <span>{formatDistanceToNow(new Date(snippet.created_at), { addSuffix: true })}</span>
-            </div>
+            {snippet.is_public && (
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <Avatar className="w-8 h-8">
+                  <AvatarImage src={profile?.avatar_url || ''} />
+                  <AvatarFallback>{userInitial}</AvatarFallback>
+                </Avatar>
+                <span>{profile?.full_name || 'Anonymous'}</span>
+                <span>•</span>
+                <span>{formatDistanceToNow(new Date(snippet.created_at), { addSuffix: true })}</span>
+              </div>
+            )}
+            {!snippet.is_public && (
+               <div className="text-sm text-muted-foreground">
+                 Private snippet created {formatDistanceToNow(new Date(snippet.created_at), { addSuffix: true })}
+               </div>
+            )}
             <CardDescription className="pt-4 text-base">{snippet.description}</CardDescription>
           </CardHeader>
           <CardContent>
@@ -62,9 +70,11 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
           </CardContent>
         </Card>
         
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Comments</h2>
-        </div>
+        {snippet.is_public && (
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-4">Comments & Votes</h2>
+          </div>
+        )}
       </div>
     </div>
   );
