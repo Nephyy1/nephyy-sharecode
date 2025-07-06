@@ -1,14 +1,61 @@
+"use client";
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CodeXml, Menu, FilePlus2, Radio, WandSparkles } from 'lucide-react';
+import { CodeXml, Menu, FilePlus2, Radio, WandSparkles, LogOut, User as UserIcon, Settings } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/client';
 import { UserNav } from './UserNav';
-import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { User } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { DropdownMenuSeparator } from './ui/dropdown-menu';
+import { useEffect, useState } from 'react';
 
-export default async function Header() {
+function LogoutButton() {
+  const router = useRouter();
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.refresh();
+  };
+
+  return (
+    <Button variant="ghost" className="w-full justify-start gap-3 text-lg py-6 px-3" onClick={handleSignOut}>
+      <LogOut className="w-5 h-5" />
+      <span>Log out</span>
+    </Button>
+  );
+}
+
+export default function Header() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
+    };
+
+    fetchUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [supabase.auth]);
+
 
   const navItems = [
     { href: "/create", label: "Create", icon: <FilePlus2 className="w-5 h-5" /> },
@@ -26,6 +73,8 @@ export default async function Header() {
       </Button>
     </>
   );
+
+  const userInitial = user?.user_metadata?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-slate-800/80">
@@ -45,9 +94,9 @@ export default async function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-2 ml-auto">
+        <div className="hidden md:flex items-center gap-3 ml-auto">
           <ThemeToggle />
-          {user ? <UserNav user={user} /> : <AuthButtons />}
+          {!loading && (user ? <UserNav user={user} /> : <AuthButtons />)}
         </div>
 
         <div className="md:hidden ml-auto flex items-center gap-2">
@@ -59,41 +108,81 @@ export default async function Header() {
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px]">
-              <div className="flex flex-col h-full p-4">
-                <nav className="flex flex-col gap-4 mt-8">
+            <SheetContent side="right" className="w-[300px] flex flex-col p-0">
+              <SheetHeader className="p-4 text-left border-b">
+                <SheetTitle>
+                  <Link href="/" className="flex items-center gap-2 font-bold text-lg">
+                    <div className="p-2 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg text-white">
+                      <CodeXml className="w-5 h-5" />
+                    </div>
+                    <span>Nephyy ShareCode</span>
+                  </Link>
+                </SheetTitle>
+              </SheetHeader>
+
+              <div className="p-4 flex-grow">
+                <nav className="flex flex-col gap-2">
                   {navItems.map((item) => (
                     <SheetClose key={item.href} asChild>
-                       <Link href={item.href} className="flex items-center gap-3 text-lg py-2 hover:bg-accent rounded-md px-3">
+                       <Link href={item.href} className="flex items-center gap-3 text-lg py-3 hover:bg-accent rounded-md px-3">
                           {item.icon}
                           <span>{item.label}</span>
                        </Link>
                     </SheetClose>
                   ))}
                 </nav>
-                <div className="mt-auto flex flex-col gap-3">
-                  {user ? (
-                    <>
-                      <SheetClose asChild>
-                        <UserNav user={user} />
-                      </SheetClose>
-                    </>
-                  ) : (
-                    <>
-                      <SheetClose asChild>
-                        <Button variant="outline" className="w-full" asChild>
-                          <Link href="/login">Login</Link>
-                        </Button>
-                      </SheetClose>
-                       <SheetClose asChild>
-                        <Button className="btn-gradient w-full" asChild>
-                          <Link href="/register">Register</Link>
-                        </Button>
-                      </SheetClose>
-                    </>
-                  )}
-                </div>
+
+                {!loading && user && (
+                  <>
+                    <DropdownMenuSeparator className="my-4" />
+                    <div className="px-3 text-lg font-semibold mb-2">Profile</div>
+                    <SheetClose asChild>
+                      <Link href="/profile" className="flex items-center gap-3 text-lg py-3 hover:bg-accent rounded-md px-3">
+                        <UserIcon className="w-5 h-5" />
+                        <span>My Profile</span>
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Link href="/settings" className="flex items-center gap-3 text-lg py-3 hover:bg-accent rounded-md px-3">
+                        <Settings className="w-5 h-5" />
+                        <span>Settings</span>
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <LogoutButton />
+                    </SheetClose>
+                  </>
+                )}
               </div>
+
+              <SheetFooter className="p-4 mt-auto border-t">
+                {!loading && !user && (
+                  <div className="flex flex-col gap-3">
+                    <SheetClose asChild>
+                      <Button variant="outline" className="w-full" asChild>
+                        <Link href="/login">Login</Link>
+                      </Button>
+                    </SheetClose>
+                     <SheetClose asChild>
+                      <Button className="btn-gradient w-full" asChild>
+                        <Link href="/register">Register</Link>
+                      </Button>
+                    </SheetClose>
+                  </div>
+                )}
+                {user && (
+                   <div className="flex items-center gap-3">
+                      <Avatar>
+                        <AvatarImage src={user.user_metadata.avatar_url} alt="User avatar" />
+                        <AvatarFallback>{userInitial}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col text-left">
+                        <span className="text-sm font-medium">{user.user_metadata.full_name}</span>
+                        <span className="text-xs text-muted-foreground">{user.email}</span>
+                      </div>
+                   </div>
+                )}
+              </SheetFooter>
             </SheetContent>
           </Sheet>
         </div>
