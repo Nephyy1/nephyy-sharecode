@@ -14,13 +14,24 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
 
   const { data: snippet } = await supabase
     .from('snippets')
-    .select(`*`)
+    .select(`
+      id,
+      title,
+      description,
+      language,
+      code,
+      created_at,
+      profiles ( full_name, avatar_url )
+    `)
     .eq('short_id', params.short_id)
     .single();
 
   if (!snippet) {
     notFound();
   }
+
+  const profile = Array.isArray(snippet.profiles) ? snippet.profiles[0] : snippet.profiles;
+  const userInitial = profile?.full_name?.charAt(0).toUpperCase() || 'A';
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -32,6 +43,12 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
         <Card className="shadow-subtle">
           <CardHeader>
             <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <Avatar className="w-8 h-8">
+                <AvatarImage src={profile?.avatar_url || ''} />
+                <AvatarFallback>{userInitial}</AvatarFallback>
+              </Avatar>
+              <span>{profile?.full_name || 'Anonymous'}</span>
+              <span>•</span>
               <span>{formatDistanceToNow(new Date(snippet.created_at), { addSuffix: true })}</span>
             </div>
             <CardDescription className="pt-4 text-base">{snippet.description}</CardDescription>
