@@ -3,14 +3,14 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
-import { CodeXml, Menu } from 'lucide-react';
+import { CodeXml, Menu, FilePlus2, Radio, WandSparkles } from 'lucide-react';
 
 export default function Header() {
   const isLoggedIn = false;
   const navItems = [
-    { href: "/create", label: "Create" },
-    { href: "/live", label: "Live" },
-    { href: "/review", label: "Review" },
+    { href: "/create", label: "Create", icon: <FilePlus2 className="w-5 h-5" /> },
+    { href: "/live", label: "Live", icon: <Radio className="w-5 h-5" /> },
+    { href: "/review", label: "Review", icon: <WandSparkles className="w-5 h-5" /> },
   ];
 
   return (
@@ -56,7 +56,10 @@ export default function Header() {
                   <nav className="flex flex-col gap-4 mt-8">
                     {navItems.map((item) => (
                       <SheetClose key={item.href} asChild>
-                         <Link href={item.href} className="text-lg py-2 hover:bg-accent rounded-md px-3">{item.label}</Link>
+                         <Link href={item.href} className="flex items-center gap-3 text-lg py-2 hover:bg-accent rounded-md px-3">
+                            {item.icon}
+                            <span>{item.label}</span>
+                         </Link>
                       </SheetClose>
                     ))}
                   </nav>
