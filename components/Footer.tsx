@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CodeXml, Mail, Phone, Github, Twitter } from 'lucide-react';
+import { Mail, Phone, Github, Twitter } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -7,11 +7,8 @@ export default function Footer() {
       <div className="container mx-auto py-12 px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           <div className="flex flex-col gap-4 items-start">
-            <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-              <div className="p-2 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg text-white">
-                <CodeXml className="w-5 h-5" />
-              </div>
-              <span>Nephyy ShareCode</span>
+            <Link href="/" className="font-bold text-xl">
+              Nephyy ShareCode
             </Link>
             <p className="text-muted-foreground text-sm">
               Platform modern untuk berbagi, berkolaborasi, dan me-review kode dengan mudah.
