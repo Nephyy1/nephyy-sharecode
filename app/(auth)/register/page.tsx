@@ -85,7 +85,7 @@ export default function RegisterPage() {
               Create Account
             </Button>
           </form>
-        </CardContent>
+        </Content>
         <div className="text-center p-6 pt-0 text-sm">
           <p className="text-muted-foreground">
             Already have an account?{' '}
