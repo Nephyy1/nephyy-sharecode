@@ -30,7 +30,13 @@ export default function LoginPage() {
 
     setIsLoading(false);
     if (error) {
-      setError(error.message);
+      if (error.message === "Invalid login credentials") {
+        setError("Email or password is incorrect.");
+      } else if (error.message.includes("Email not confirmed")) {
+        setError("Your email is not confirmed. Please check your inbox for the verification link.");
+      } else {
+        setError(error.message);
+      }
     } else {
       router.push('/');
       router.refresh();
