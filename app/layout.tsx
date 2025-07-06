@@ -3,6 +3,7 @@ import { Manrope } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const manrope = Manrope({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -45,15 +46,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={manrope.className}>
-        <div className="flex flex-col min-h-screen bg-gray-50/50">
-          <Header />
-          <main className="flex-grow container mx-auto py-6 sm:py-10">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="flex flex-col min-h-screen bg-gray-50/50 dark:bg-background">
+            <Header />
+            <main className="flex-grow container mx-auto py-6 sm:py-10">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
