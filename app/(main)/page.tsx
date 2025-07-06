@@ -14,7 +14,7 @@ export default function LandingPage() {
         className="mb-6 rounded-2xl shadow-lg"
         priority
       />
-      <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter max-w-2xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700">
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter max-w-2xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-50 dark:to-slate-400">
         Share, Collaborate, and Review Code Instantly
       </h1>
       <p className="mt-6 max-w-xl mx-auto text-lg text-muted-foreground">
