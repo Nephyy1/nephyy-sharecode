@@ -46,15 +46,13 @@ export default function Header() {
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
-      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
-        setLoading(false);
-      }
+      setLoading(false);
     });
 
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [supabase.auth]);
+  }, []);
 
 
   const navItems = [
