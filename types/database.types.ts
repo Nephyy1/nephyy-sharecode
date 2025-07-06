@@ -97,7 +97,7 @@ export type Database = {
           language: string
           short_id: string | null
           title: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           code: string
@@ -108,7 +108,7 @@ export type Database = {
           language: string
           short_id?: string | null
           title: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           code?: string
@@ -119,7 +119,7 @@ export type Database = {
           language?: string
           short_id?: string | null
           title?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -263,7 +263,7 @@ export type Enums<
     ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  ? Database[PublicTableNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
