@@ -1,13 +1,13 @@
-"use client";
-
-import { useState } from 'react';
-import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, User, Github, LoaderCircle, CheckCircle } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { CheckCircle, LoaderCircle, Lock, Mail, User } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
+
+export const dynamic = 'force-dynamic';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
