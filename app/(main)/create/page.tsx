@@ -129,12 +129,12 @@ export default function CreatePage() {
             />
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="text-sm">
+        <CardFooter className="flex flex-col-reverse sm:flex-row sm:justify-between items-center gap-4">
+          <div className="text-sm w-full sm:w-auto">
             {error && <p className="text-destructive">{error}</p>}
             {success && <p className="text-green-500 flex items-center gap-2"><CheckCircle className="w-4 h-4"/>{success}</p>}
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
              <Button type="button" variant="outline" size="lg" onClick={() => handleSaveSnippet(false)} disabled={isLoading}>
               {isLoading ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : <Link2 className="mr-2 h-4 w-4" />}
               Create Share Link
