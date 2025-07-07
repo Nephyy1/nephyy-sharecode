@@ -2,16 +2,17 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CodeXml, Menu, FilePlus2, WandSparkles, LogOut, User as UserIcon, Settings, Compass, MessagesSquare } from 'lucide-react';
+import { CodeXml, Menu, FilePlus2, WandSparkles, LogOut, User as UserIcon, Settings, Compass, MessagesSquare, ShieldCheck } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { createClient } from '@/lib/supabase/client';
 import { UserNav } from './UserNav';
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { DropdownMenuSeparator } from './ui/dropdown-menu';
 import { useEffect, useState } from 'react';
+import { Tables } from '@/types/database.types';
 
 function LogoutButton() {
   const router = useRouter();
@@ -32,20 +33,34 @@ function LogoutButton() {
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Tables<'profiles'> | null>(null);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserAndProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+
+      if (user) {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        setProfile(profileData);
+      }
       setLoading(false);
     };
 
-    fetchUser();
+    fetchUserAndProfile();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
+      const newUser = session?.user ?? null;
+      setUser(newUser);
+      if(event === 'SIGNED_OUT') {
+        setProfile(null);
+      }
       setLoading(false);
     });
 
@@ -73,7 +88,7 @@ export default function Header() {
     </>
   );
 
-  const userInitial = user?.user_metadata?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase();
+  const userInitial = profile?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-slate-800/80">
@@ -95,7 +110,7 @@ export default function Header() {
 
         <div className="hidden md:flex items-center gap-3 ml-auto">
           <ThemeToggle />
-          {!loading && (user ? <UserNav user={user} /> : <AuthButtons />)}
+          {!loading && (user ? <UserNav user={user} profile={profile} /> : <AuthButtons />)}
         </div>
 
         <div className="md:hidden ml-auto flex items-center gap-2">
@@ -134,7 +149,15 @@ export default function Header() {
                 {!loading && user && (
                   <>
                     <DropdownMenuSeparator className="my-4" />
-                    <div className="px-3 text-lg font-semibold mb-2">Profile</div>
+                    <div className="px-3 text-lg font-semibold mb-2">Account</div>
+                    {profile?.role === 'admin' && (
+                      <SheetClose asChild>
+                        <Link href="/admin" className="flex items-center gap-3 text-lg py-3 text-primary hover:bg-accent rounded-md px-3">
+                          <ShieldCheck className="w-5 h-5" />
+                          <span>Admin Dashboard</span>
+                        </Link>
+                      </SheetClose>
+                    )}
                     <SheetClose asChild>
                       <Link href="/profile" className="flex items-center gap-3 text-lg py-3 hover:bg-accent rounded-md px-3">
                         <UserIcon className="w-5 h-5" />
@@ -172,11 +195,11 @@ export default function Header() {
                 {user && (
                    <div className="flex items-center gap-3">
                       <Avatar>
-                        <AvatarImage src={user.user_metadata.avatar_url} alt="User avatar" />
+                        <AvatarImage src={profile?.avatar_url || ''} alt="User avatar" />
                         <AvatarFallback>{userInitial}</AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col text-left">
-                        <span className="text-sm font-medium">{user.user_metadata.full_name}</span>
+                        <span className="text-sm font-medium">{profile?.full_name}</span>
                         <span className="text-xs text-muted-foreground">{user.email}</span>
                       </div>
                    </div>
