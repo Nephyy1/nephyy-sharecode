@@ -2,45 +2,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { formatDistanceToNow } from 'date-fns';
 import { SnippetActions } from "@/components/SnippetActions";
 import { VoteComponent } from "@/components/VoteComponent";
 import { CommentSection } from "@/components/CommentSection";
 import { DeleteSnippetButton } from "@/components/DeleteSnippetButton";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Copy, Check } from "lucide-react";
-
-// Komponen baru khusus untuk membungkus blok kode dengan tombol copy
-function CodeBlockWrapper({ code, language }: { code: string, language: string }) {
-  "use client";
-  const [isCopied, setIsCopied] = useState(false);
-
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(code);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
-  };
-
-  return (
-    <div className="relative group">
-      <Button
-        size="icon"
-        variant="ghost"
-        className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-        onClick={handleCopyCode}
-      >
-        {isCopied ? <Check className="h-5 w-5 text-green-500" /> : <Copy className="h-5 w-5" />}
-      </Button>
-      <SyntaxHighlighter language={language.toLowerCase()} style={vscDarkPlus} customStyle={{ margin: 0, borderRadius: '0.5rem' }}>
-        {code}
-      </SyntaxHighlighter>
-    </div>
-  );
-}
-
+import { CodeBlockWrapper } from "@/components/CodeBlockWrapper";
 
 export const dynamic = 'force-dynamic';
 
@@ -67,7 +35,7 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
   if (!snippet) {
     notFound();
   }
-  
+
   let initialVotesData = null;
   if(snippet.is_public) {
     const { data } = await supabase
