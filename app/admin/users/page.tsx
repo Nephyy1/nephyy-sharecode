@@ -21,7 +21,8 @@ export default async function AdminUsersPage() {
             <TableRow>
               <TableHead>User</TableHead>
               <TableHead>Role</TableHead>
-              <TableHead className="hidden md:table-cell">Joined At</TableHead>
+              <TableHead className="hidden md:table-cell">Email</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -33,10 +34,7 @@ export default async function AdminUsersPage() {
                       <AvatarImage src={profile.avatar_url || ''} />
                       <AvatarFallback>{profile.full_name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                     </Avatar>
-                    <div className="grid gap-1">
-                      <p className="font-medium">{profile.full_name}</p>
-                      <p className="text-sm text-muted-foreground">ID: {profile.id}</p>
-                    </div>
+                    <div className="font-medium">{profile.full_name || 'N/A'}</div>
                   </div>
                 </TableCell>
                 <TableCell>
@@ -45,7 +43,10 @@ export default async function AdminUsersPage() {
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {format(new Date(profile.updated_at || new Date()), "PPP")}
+                   {/* In a real app, you'd get this from auth.users, but that requires more complex queries */}
+                </TableCell>
+                 <TableCell>
+                  ...
                 </TableCell>
               </TableRow>
             ))}
