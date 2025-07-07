@@ -126,7 +126,7 @@ export type Database = {
             foreignKeyName: "snippets_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -169,7 +169,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      snippet_votes: {
+        Row: {
+          score: number | null
+          snippet_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_snippet_id_fkey"
+            columns: ["snippet_id"]
+            isOneToOne: false
+            referencedRelation: "snippets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       handle_new_user: {
