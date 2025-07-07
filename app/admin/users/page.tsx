@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 
 export default async function AdminUsersPage() {
   const supabase = createClient();
-  const { data: profiles } = await supabase.from('profiles').select('*, users(email)');
+  const { data: profiles } = await supabase.from('profiles').select('*');
 
   return (
     <Card>
@@ -20,8 +20,8 @@ export default async function AdminUsersPage() {
           <TableHeader>
             <TableRow>
               <TableHead>User</TableHead>
-              <TableHead className="hidden sm:table-cell">Role</TableHead>
-              <TableHead className="hidden md:table-cell">Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead className="hidden md:table-cell">Joined At</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -37,13 +37,13 @@ export default async function AdminUsersPage() {
                     <div className="font-medium">{profile.full_name || 'N/A'}</div>
                   </div>
                 </TableCell>
-                <TableCell className="hidden sm:table-cell">
+                <TableCell>
                   <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'}>
                     {profile.role}
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {profile.users?.email}
+                  {format(new Date(profile.updated_at || new Date()), "PPP")}
                 </TableCell>
                  <TableCell>
                   ...
