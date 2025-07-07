@@ -7,47 +7,9 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { formatDistanceToNow } from 'date-fns';
 import { VoteComponent } from "@/components/VoteComponent";
 import { CommentSection } from "@/components/CommentSection";
-import { DeleteSnippetButton } from "@/components/DeleteSnippetButton";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Check, Copy, Link as LinkIcon } from "lucide-react";
-import { useState, useEffect } from "react";
-
-function SnippetActionButtons({ code, isOwner, snippetId }: { code: string, isOwner: boolean, snippetId: string }) {
-  "use client";
-  const [isCodeCopied, setIsCodeCopied] = useState(false);
-  const [isLinkCopied, setIsLinkCopied] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState('');
-
-  useEffect(() => {
-    setCurrentUrl(window.location.href);
-  }, []);
-
-  const handleCopy = (type: 'code' | 'link') => {
-    if (type === 'code') {
-      navigator.clipboard.writeText(code);
-      setIsCodeCopied(true);
-      setTimeout(() => setIsCodeCopied(false), 2000);
-    } else {
-      navigator.clipboard.writeText(currentUrl);
-      setIsLinkCopied(true);
-      setTimeout(() => setIsLinkCopied(false), 2000);
-    }
-  };
-
-  return (
-    <div className="flex items-center gap-2">
-      <Button variant="outline" onClick={() => handleCopy('code')}>
-        {isCodeCopied ? <Check className="mr-2 h-4 w-4 text-green-500" /> : <Copy className="mr-2 h-4 w-4" />}
-        {isCodeCopied ? "Copied!" : "Copy Code"}
-      </Button>
-      <Button variant="outline" size="icon" onClick={() => handleCopy('link')}>
-        {isLinkCopied ? <Check className="h-4 w-4 text-green-500" /> : <LinkIcon className="h-4 w-4" />}
-      </Button>
-      {isOwner && <DeleteSnippetButton snippetId={snippetId} />}
-    </div>
-  );
-}
+import { CodeBlockWrapper } from "@/components/CodeBlockWrapper";
+import { SnippetActionButtons } from "@/components/SnippetActionButtons";
 
 export const dynamic = 'force-dynamic';
 
@@ -154,11 +116,7 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
           <div className="flex-1 w-full">
             <Card className="shadow-subtle overflow-hidden">
               <CardContent className="p-0">
-                <div className="rounded-lg overflow-hidden bg-[#1E1E1E]">
-                  <SyntaxHighlighter language={snippet.language.toLowerCase()} style={vscDarkPlus} customStyle={{ margin: 0 }}>
-                    {snippet.code}
-                  </SyntaxHighlighter>
-                </div>
+                <CodeBlockWrapper code={snippet.code} language={snippet.language} />
               </CardContent>
             </Card>
           </div>
