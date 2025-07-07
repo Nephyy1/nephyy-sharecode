@@ -14,11 +14,15 @@ export const metadata: Metadata = {
   description: "The ultimate platform for developers to share code snippets, engage in live coding sessions, and get AI-powered feedback. Built by Nephyy.",
   authors: [{ name: "Nephyy" }],
   keywords: ["code sharing", "live coding, pair programming", "AI code review", "developer tools", "Nephyy"],
-  metadataBase: new URL('https://your-production-url.com'),
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0e1c" },
+  ],
+  metadataBase: new URL('https://sharecode.nephyy.tech'),
   openGraph: {
     title: "Nephyy ShareCode",
     description: "Share, Collaborate, and Review Code with AI.",
-    url: "https://your-production-url.com",
+    url: "https://sharecode.nephyy.tech",
     siteName: "Nephyy ShareCode",
     images: [
       {
