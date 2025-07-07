@@ -8,7 +8,6 @@ import { formatDistanceToNow } from 'date-fns';
 import { VoteComponent } from "@/components/VoteComponent";
 import { CommentSection } from "@/components/CommentSection";
 import { Badge } from "@/components/ui/badge";
-import { CodeBlockWrapper } from "@/components/CodeBlockWrapper";
 import { SnippetActionButtons } from "@/components/SnippetActionButtons";
 
 export const dynamic = 'force-dynamic';
@@ -116,7 +115,11 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
           <div className="flex-1 w-full">
             <Card className="shadow-subtle overflow-hidden">
               <CardContent className="p-0">
-                <CodeBlockWrapper code={snippet.code} language={snippet.language} />
+                <div className="rounded-lg overflow-hidden bg-[#1E1E1E]">
+                  <SyntaxHighlighter language={snippet.language.toLowerCase()} style={vscDarkPlus} customStyle={{ margin: 0 }}>
+                    {snippet.code}
+                  </SyntaxHighlighter>
+                </div>
               </CardContent>
             </Card>
           </div>
