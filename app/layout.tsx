@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const manrope = Manrope({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -61,6 +62,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
+          <Toaster richColors position="top-center" />
         </ThemeProvider>
       </body>
     </html>
