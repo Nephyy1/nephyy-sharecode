@@ -5,6 +5,7 @@ import { Code2 } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserBadges } from "@/components/UserBadges";
 
 export default async function ExplorePage() {
   const supabase = createClient();
@@ -17,7 +18,7 @@ export default async function ExplorePage() {
       description,
       language,
       created_at,
-      profiles ( full_name, avatar_url )
+      profiles ( *, user_badges(*, badges(*)) )
     `)
     .eq('is_public', true)
     .order('created_at', { ascending: false });
@@ -39,20 +40,10 @@ export default async function ExplorePage() {
           return (
             <Card key={snippet.id} className="flex flex-col shadow-subtle hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <CardTitle className="truncate hover:text-primary">
-                      <Link href={`/s/${snippet.short_id}`}>{snippet.title}</Link>
-                    </CardTitle>
-                    <CardDescription className="line-clamp-2 mt-1">{snippet.description}</CardDescription>
-                  </div>
-                  <Link href={`/profile/${profile?.id}`} className="flex-shrink-0">
-                    <Avatar>
-                      <AvatarImage src={profile?.avatar_url || ''} />
-                      <AvatarFallback>{userInitial}</AvatarFallback>
-                    </Avatar>
-                  </Link>
-                </div>
+                <CardTitle className="truncate hover:text-primary">
+                  <Link href={`/s/${snippet.short_id}`}>{snippet.title}</Link>
+                </CardTitle>
+                <CardDescription className="line-clamp-2 mt-1">{snippet.description}</CardDescription>
               </CardHeader>
               <CardContent className="flex-grow">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -62,7 +53,10 @@ export default async function ExplorePage() {
               </CardContent>
               <CardFooter className="flex justify-between items-center text-sm text-muted-foreground border-t pt-4">
                 <div className="flex flex-col">
-                  <span className="font-semibold text-foreground">{profile?.full_name || 'Anonymous'}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-semibold text-foreground">{profile?.full_name || 'Anonymous'}</span>
+                    <UserBadges badges={profile?.user_badges || []} />
+                  </div>
                   <span>{formatDistanceToNow(new Date(snippet.created_at), { addSuffix: true })}</span>
                 </div>
                 <Button asChild variant="secondary" size="sm">
