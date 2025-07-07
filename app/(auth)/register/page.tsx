@@ -8,13 +8,13 @@ import { Label } from '@/components/ui/label';
 import { CheckCircle, Github, LoaderCircle, Lock, Mail, User, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { toast } from "sonner"
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState('');
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createClient();
@@ -22,7 +22,6 @@ export default function RegisterPage() {
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
     setSuccess(false);
 
     const { data, error } = await supabase.auth.signUp({
@@ -37,11 +36,12 @@ export default function RegisterPage() {
 
     setIsLoading(false);
     if (error) {
-      setError(error.message);
+      toast.error(error.message);
     } else if (data.user) {
       if (data.user.identities && data.user.identities.length === 0) {
-        setError("User with this email already exists but is unconfirmed. Please check your email for the confirmation link.");
+        toast.error("User with this email already exists but is unconfirmed. Please check your email for the confirmation link.");
       } else {
+        toast.success("Registration successful!");
         setSuccess(true);
       }
     }
@@ -91,7 +91,6 @@ export default function RegisterPage() {
                   </div>
                 </div>
               </div>
-              {error && <p className="mt-4 text-center text-sm text-destructive">{error}</p>}
               <Button type="submit" className="w-full mt-6 btn-gradient text-base" disabled={isLoading}>
                 {isLoading && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
                 Create Account
