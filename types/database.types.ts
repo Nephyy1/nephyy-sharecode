@@ -296,8 +296,32 @@ export type Database = {
           },
         ]
       }
+      topic_stats: {
+        Row: {
+          last_reply_at: string | null
+          post_count: number | null
+          topic_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_posts_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "forum_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      create_new_topic: {
+        Args: {
+          category_id_input: string
+          title_input: string
+          content_input: string
+        }
+        Returns: string
+      }
       handle_new_user: {
         Args: Record<PropertyKey, never>
         Returns: Record<string, unknown>
