@@ -9,6 +9,7 @@ import { Mail, Lock, Github, LoaderCircle, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from "sonner"
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +17,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const supabase = createClient();
@@ -24,7 +24,6 @@ export default function LoginPage() {
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -34,13 +33,14 @@ export default function LoginPage() {
     setIsLoading(false);
     if (error) {
       if (error.message === "Invalid login credentials") {
-        setError("Email or password is incorrect.");
+        toast.error("Email or password is incorrect.");
       } else if (error.message.includes("Email not confirmed")) {
-        setError("Your email is not confirmed. Please check your inbox for the verification link.");
+        toast.error("Your email is not confirmed. Please check your inbox for the verification link.");
       } else {
-        setError(error.message);
+        toast.error(error.message);
       }
     } else {
+      toast.success("Login successful! Redirecting...");
       router.push('/');
       router.refresh();
     }
@@ -74,7 +74,6 @@ export default function LoginPage() {
                 </div>
               </div>
             </div>
-            {error && <p className="mt-4 text-center text-sm text-destructive">{error}</p>}
             <Button type="submit" className="w-full mt-6 btn-gradient text-base" disabled={isLoading}>
               {isLoading && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
               Login
