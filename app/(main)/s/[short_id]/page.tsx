@@ -27,6 +27,7 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
       code,
       created_at,
       is_public,
+      short_id,
       profiles ( full_name, avatar_url )
     `)
     .eq('short_id', params.short_id)
@@ -100,7 +101,7 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
             <Badge variant="secondary">{snippet.language}</Badge>
             <span className="text-muted-foreground">{formatDistanceToNow(new Date(snippet.created_at), { addSuffix: true })}</span>
           </div>
-          <SnippetActionButtons code={snippet.code} isOwner={isOwner} snippetId={snippet.id} />
+          <SnippetActionButtons code={snippet.code} isOwner={isOwner} snippetId={snippet.id} shortId={snippet.short_id} />
         </div>
 
         <div className="flex flex-col md:flex-row items-start gap-4">
