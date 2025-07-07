@@ -67,7 +67,7 @@ export default async function AdminLayout({
           <div className="w-full flex-1">
             <h1 className="text-lg font-semibold">Dashboard</h1>
           </div>
-          <UserNav user={user} />
+          <UserNav user={user} profile={profile} />
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
           {children}
