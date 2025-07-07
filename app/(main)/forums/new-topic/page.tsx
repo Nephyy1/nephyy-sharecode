@@ -13,6 +13,8 @@ import { LoaderCircle, CheckCircle } from "lucide-react";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Tables } from "@/types/database.types";
 
+export const dynamic = 'force-dynamic';
+
 export default function NewTopicPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
