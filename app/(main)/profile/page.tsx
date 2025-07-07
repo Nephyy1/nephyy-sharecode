@@ -2,9 +2,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
-import { Edit } from "lucide-react";
+import { Edit, ShieldCheck, Star, Baby } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+
+const badgeIcons: { [key: string]: React.ReactNode } = {
+  Admin: <ShieldCheck className="w-4 h-4 mr-1.5" />,
+  Expert: <Star className="w-4 h-4 mr-1.5" />,
+  Rookie: <Baby className="w-4 h-4 mr-1.5" />,
+};
 
 export default async function ProfilePage() {
   const supabase = createClient();
@@ -14,7 +21,13 @@ export default async function ProfilePage() {
     redirect('/login');
   }
 
-  const userInitial = user.user_metadata.full_name?.charAt(0).toUpperCase() || user.email!.charAt(0).toUpperCase();
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*, user_badges(*, badges(*))')
+    .eq('id', user.id)
+    .single();
+
+  const userInitial = profile?.full_name?.charAt(0).toUpperCase() || user.email!.charAt(0).toUpperCase();
   const joinDate = new Date(user.created_at).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -38,30 +51,20 @@ export default async function ProfilePage() {
         <CardContent className="mt-6">
           <div className="flex items-center space-x-6">
             <Avatar className="w-24 h-24 text-3xl">
-              <AvatarImage src={user.user_metadata.avatar_url} alt="User avatar" />
+              <AvatarImage src={profile?.avatar_url || ''} alt="User avatar" />
               <AvatarFallback>{userInitial}</AvatarFallback>
             </Avatar>
-            <div className="space-y-1">
-              <h2 className="text-3xl font-bold">{user.user_metadata.full_name || 'No Name Set'}</h2>
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold">{profile?.full_name || 'No Name Set'}</h2>
               <p className="text-muted-foreground">{user.email}</p>
-            </div>
-          </div>
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-muted-foreground font-medium">Full Name</p>
-              <p className="font-semibold">{user.user_metadata.full_name || 'N/A'}</p>
-            </div>
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-muted-foreground font-medium">Email Address</p>
-              <p className="font-semibold">{user.email}</p>
-            </div>
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-muted-foreground font-medium">User ID</p>
-              <p className="font-mono text-xs">{user.id}</p>
-            </div>
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-muted-foreground font-medium">Joined On</p>
-              <p className="font-semibold">{joinDate}</p>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {profile?.user_badges.map(userBadge => (
+                  <Badge key={userBadge.badge_id} variant="secondary" className="flex items-center">
+                    {badgeIcons[userBadge.badges?.name || ''] || null}
+                    {userBadge.badges?.name}
+                  </Badge>
+                ))}
+              </div>
             </div>
           </div>
         </CardContent>
