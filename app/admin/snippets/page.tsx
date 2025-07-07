@@ -24,9 +24,8 @@ export default async function AdminSnippetsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
-              <TableHead>Author</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Created At</TableHead>
+              <TableHead className="hidden md:table-cell">Author</TableHead>
+              <TableHead className="hidden sm:table-cell">Type</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -38,13 +37,12 @@ export default async function AdminSnippetsPage() {
                     {snippet.title}
                   </Link>
                 </TableCell>
-                <TableCell>{snippet.profiles?.full_name || 'Anonymous'}</TableCell>
-                <TableCell>
+                <TableCell className="hidden md:table-cell">{snippet.profiles?.full_name || 'Anonymous'}</TableCell>
+                <TableCell className="hidden sm:table-cell">
                   <Badge variant={snippet.is_public ? 'default' : 'secondary'}>
                     {snippet.is_public ? 'Public' : 'Private Link'}
                   </Badge>
                 </TableCell>
-                <TableCell>{format(new Date(snippet.created_at), "PPP")}</TableCell>
                 <TableCell>
                   <DeleteButton itemId={snippet.id} tableName="snippets" path="/admin/snippets" />
                 </TableCell>
