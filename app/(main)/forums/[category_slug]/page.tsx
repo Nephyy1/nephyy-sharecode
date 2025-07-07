@@ -6,6 +6,7 @@ import { PlusCircle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { Card } from "@/components/ui/card";
+import { UserBadges } from "@/components/UserBadges";
 
 export const dynamic = 'force-dynamic';
 
@@ -29,7 +30,7 @@ export default async function CategoryPage({ params }: { params: { category_slug
       id,
       title,
       created_at,
-      profiles ( full_name, avatar_url ),
+      profiles ( *, user_badges(*, badges(*)) ),
       forum_posts ( count )
     `)
     .eq('category_id', category.id)
@@ -71,9 +72,11 @@ export default async function CategoryPage({ params }: { params: { category_slug
                     <Link href={`/forums/topic/${topic.id}`} className="font-semibold text-lg hover:underline truncate block">
                       {topic.title}
                     </Link>
-                    <p className="text-sm text-muted-foreground">
-                      Started by {authorProfile?.full_name || 'Anonymous'} • {formatDistanceToNow(new Date(topic.created_at), { addSuffix: true })}
-                    </p>
+                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <span>Started by {authorProfile?.full_name || 'Anonymous'}</span>
+                      <UserBadges badges={authorProfile?.user_badges || []} />
+                      <span>• {formatDistanceToNow(new Date(topic.created_at), { addSuffix: true })}</span>
+                    </div>
                   </div>
                 </div>
                 <div className="hidden sm:flex items-center gap-6 text-center ml-4">
