@@ -4,10 +4,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { format } from 'date-fns';
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Settings } from "lucide-react";
 
 export default async function AdminUsersPage() {
   const supabase = createClient();
-  const { data: profiles } = await supabase.from('profiles').select('*');
+  const { data: profiles } = await supabase.from('profiles').select('*, users(email)');
 
   return (
     <Card>
@@ -20,8 +23,7 @@ export default async function AdminUsersPage() {
           <TableHeader>
             <TableRow>
               <TableHead>User</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead className="hidden md:table-cell">Joined At</TableHead>
+              <TableHead className="hidden sm:table-cell">Role</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -37,16 +39,18 @@ export default async function AdminUsersPage() {
                     <div className="font-medium">{profile.full_name || 'N/A'}</div>
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'}>
                     {profile.role}
                   </Badge>
                 </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {format(new Date(profile.updated_at || new Date()), "PPP")}
-                </TableCell>
-                 <TableCell>
-                  ...
+                <TableCell>
+                  <Button asChild variant="outline" size="sm">
+                    <Link href={`/admin/users/${profile.id}/manage`}>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Manage
+                    </Link>
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
