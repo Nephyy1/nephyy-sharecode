@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 
 export default async function AdminUsersPage() {
   const supabase = createClient();
-  const { data: profiles } = await supabase.from('profiles').select('*');
+  const { data: profiles } = await supabase.from('profiles').select('*, users(email)');
 
   return (
     <Card>
@@ -20,7 +20,7 @@ export default async function AdminUsersPage() {
           <TableHeader>
             <TableRow>
               <TableHead>User</TableHead>
-              <TableHead>Role</TableHead>
+              <TableHead className="hidden sm:table-cell">Role</TableHead>
               <TableHead className="hidden md:table-cell">Email</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -37,13 +37,13 @@ export default async function AdminUsersPage() {
                     <div className="font-medium">{profile.full_name || 'N/A'}</div>
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'}>
                     {profile.role}
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                   {/* In a real app, you'd get this from auth.users, but that requires more complex queries */}
+                  {profile.users?.email}
                 </TableCell>
                  <TableCell>
                   ...
