@@ -40,7 +40,7 @@ export function DeleteSnippetButton({ snippetId }: { snippetId: string }) {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
+            This action cannot be undone, This will permanently delete your
             snippet and all of its data.
           </AlertDialogDescription>
         </AlertDialogHeader>
