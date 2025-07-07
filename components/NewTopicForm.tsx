@@ -22,6 +22,7 @@ function NewTopicFormComponent() {
   const [categories, setCategories] = useState<Tables<'forum_categories'>[]>([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
   
   const [isLoading, setIsLoading] = useState(false);
@@ -59,6 +60,7 @@ function NewTopicFormComponent() {
       category_id_input: selectedCategory,
       title_input: title,
       content_input: content,
+      image_url_input: imageUrl || null
     });
     
     setIsLoading(false);
@@ -108,6 +110,10 @@ function NewTopicFormComponent() {
             <div className="space-y-2">
               <Label htmlFor="content">Your Post</Label>
               <Textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your post content here..." required rows={10} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="imageUrl">Image URL (Optional)</Label>
+              <Input id="imageUrl" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://example.com/image.png" />
             </div>
           </CardContent>
           <CardFooter className="flex justify-between items-center">
