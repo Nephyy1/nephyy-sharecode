@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ReplyForm } from "@/components/ReplyForm";
 import { DeleteTopicButton } from "@/components/DeleteTopicButton";
+import { UserBadges } from "@/components/UserBadges";
 
 function PostCard({ post, isOP = false }: { post: any, isOP?: boolean }) {
   const author = Array.isArray(post.profiles) ? post.profiles[0] : post.profiles;
@@ -21,9 +22,10 @@ function PostCard({ post, isOP = false }: { post: any, isOP?: boolean }) {
         {isOP && <Badge variant="secondary" className="mt-2">Author</Badge>}
       </div>
       <div className="flex-1 p-4 border rounded-lg bg-card">
-        <div className="flex items-baseline gap-2 text-sm">
+        <div className="flex items-center gap-2 text-sm">
           <p className="font-semibold">{author?.full_name || 'Anonymous'}</p>
-          <p className="text-muted-foreground">
+          <UserBadges badges={author?.user_badges || []} />
+          <p className="text-muted-foreground ml-auto">
             {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
           </p>
         </div>
@@ -43,7 +45,7 @@ export default async function TopicPage({ params }: { params: { topic_id: string
 
   const { data: topic } = await supabase
     .from('forum_topics')
-    .select('*, profiles (full_name)')
+    .select('*, profiles (*, user_badges(*, badges(*)))')
     .eq('id', params.topic_id)
     .single();
 
@@ -53,13 +55,14 @@ export default async function TopicPage({ params }: { params: { topic_id: string
 
   const { data: posts } = await supabase
     .from('forum_posts')
-    .select('*, profiles (full_name, avatar_url)')
+    .select('*, profiles (*, user_badges(*, badges(*)))')
     .eq('topic_id', params.topic_id)
     .order('created_at', { ascending: true });
 
   const originalPost = posts?.[0];
   const replies = posts?.slice(1) || [];
   const isOwner = user?.id === topic.user_id;
+  const authorProfile = Array.isArray(topic.profiles) ? topic.profiles[0] : topic.profiles;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -68,9 +71,10 @@ export default async function TopicPage({ params }: { params: { topic_id: string
           <h1 className="text-4xl font-bold tracking-tighter break-words">{topic.title}</h1>
           {isOwner && <DeleteTopicButton topicId={topic.id} />}
         </div>
-        <p className="text-muted-foreground">
-          A topic started by {topic.profiles?.full_name || 'Anonymous'}
-        </p>
+        <div className="flex items-center gap-2 text-muted-foreground">
+           <span>A topic started by {authorProfile?.full_name || 'Anonymous'}</span>
+           <UserBadges badges={authorProfile?.user_badges || []} />
+        </div>
         {topic.image_url && (
           <div className="relative aspect-video rounded-lg overflow-hidden border">
             <img src={topic.image_url} alt={topic.title} className="w-full h-full object-cover" />
