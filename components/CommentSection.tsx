@@ -9,11 +9,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
-import { LoaderCircle, MessageSquareReply, Send } from "lucide-react";
+import { LoaderCircle, MessageSquareReply } from "lucide-react";
 import Link from "next/link";
+import { UserBadges } from "./UserBadges";
 
-type Profile = Tables<'profiles'>;
-type CommentWithProfile = Tables<'comments'> & { profiles: Profile | null };
+type ProfileWithBadges = Tables<'profiles'> & {
+  user_badges: ({ badges: Tables<'badges'> | null })[]
+};
+type CommentWithProfile = Tables<'comments'> & { profiles: ProfileWithBadges | null };
 
 type CommentSectionProps = {
   snippetId: string;
@@ -45,7 +48,7 @@ function CommentForm({
     const { data, error } = await supabase
       .from('comments')
       .insert({ content, user_id: user.id, snippet_id: snippetId, parent_id: parentId })
-      .select('*, profiles(*)')
+      .select('*, profiles(*, user_badges(*, badges(*)))')
       .single();
 
     if (data) {
@@ -98,15 +101,16 @@ function Comment({
       </Avatar>
       <div className="flex-1 space-y-2">
         <div>
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-center gap-2 text-sm">
             <p className="font-semibold">{comment.profiles?.full_name || 'Anonymous'}</p>
+            <UserBadges badges={comment.profiles?.user_badges || []} />
             <p className="text-xs text-muted-foreground">
               {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
             </p>
           </div>
-          <p className="text-foreground/90">{comment.content}</p>
+          <p className="text-foreground/90 mt-1">{comment.content}</p>
         </div>
-        {user && <Button variant="ghost" size="sm" className="h-auto p-1" onClick={() => setIsReplying(!isReplying)}><MessageSquareReply className="w-4 h-4 mr-1"/> Reply</Button>}
+        {user && <Button variant="ghost" size="sm" className="h-auto p-1 text-muted-foreground" onClick={() => setIsReplying(!isReplying)}><MessageSquareReply className="w-4 h-4 mr-1"/> Reply</Button>}
         {isReplying && user && (
           <div className="pl-4 border-l-2">
             <CommentForm
@@ -171,7 +175,7 @@ export function CommentSection({ snippetId, initialComments, user }: CommentSect
         </div>
       )}
 
-      <div className="space-y-8">
+      <div className="space-y-8 mt-8">
         {rootComments.map((comment) => (
           <Comment
             key={comment.id}
