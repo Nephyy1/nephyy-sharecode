@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { BackButton } from "@/components/BackButton";
 
 const manrope = Manrope({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
   title: "Nephyy ShareCode - Share, Collaborate, and Review Code",
   description: "The ultimate platform for developers to share code snippets, engage in live coding sessions, and get AI-powered feedback. Built by Nephyy.",
   authors: [{ name: "Nephyy" }],
-  keywords: ["code sharing", "live coding", "pair programming", "AI code review", "developer tools", "Nephyy"],
+  keywords: ["code sharing", "live coding, pair programming", "AI code review", "developer tools", "Nephyy"],
   metadataBase: new URL('https://your-production-url.com'),
   openGraph: {
     title: "Nephyy ShareCode",
@@ -58,6 +59,7 @@ export default function RootLayout({
           <div className="flex flex-col min-h-screen bg-gray-50/50 dark:bg-background">
             <Header />
             <main className="flex-grow container mx-auto py-6 sm:py-10">
+              <BackButton />
               {children}
             </main>
             <Footer />
