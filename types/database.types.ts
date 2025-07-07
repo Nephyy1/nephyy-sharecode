@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      badges: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon_name: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon_name?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon_name?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       comments: {
         Row: {
           content: string
@@ -249,6 +273,39 @@ export type Database = {
           },
         ]
       }
+      user_badges: {
+        Row: {
+          assigned_at: string
+          badge_id: string
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          badge_id: string
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string
+          badge_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_badges_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       votes: {
         Row: {
           id: number
@@ -320,6 +377,12 @@ export type Database = {
       }
     }
     Functions: {
+      assign_rookie_badge: {
+        Args: {
+          user_id_input: string
+        }
+        Returns: undefined
+      }
       create_new_topic: {
         Args: {
           category_id_input: string
