@@ -23,9 +23,8 @@ export default async function AdminForumsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Topic Title</TableHead>
-              <TableHead>Author</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Created At</TableHead>
+              <TableHead className="hidden md:table-cell">Author</TableHead>
+              <TableHead className="hidden sm:table-cell">Category</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -37,9 +36,8 @@ export default async function AdminForumsPage() {
                     {topic.title}
                   </Link>
                 </TableCell>
-                <TableCell>{topic.profiles?.full_name}</TableCell>
-                <TableCell>{topic.forum_categories?.title}</TableCell>
-                <TableCell>{format(new Date(topic.created_at), "PPP")}</TableCell>
+                <TableCell className="hidden md:table-cell">{topic.profiles?.full_name}</TableCell>
+                <TableCell className="hidden sm:table-cell">{topic.forum_categories?.title}</TableCell>
                 <TableCell>
                   <DeleteButton itemId={topic.id} tableName="forum_topics" path="/admin/forums" />
                 </TableCell>
