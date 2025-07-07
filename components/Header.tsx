@@ -6,7 +6,7 @@ import { CodeXml, Menu, FilePlus2, WandSparkles, LogOut, User as UserIcon, Setti
 import { ThemeToggle } from './ThemeToggle';
 import { createClient } from '@/lib/supabase/client';
 import { UserNav } from './UserNav';
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
