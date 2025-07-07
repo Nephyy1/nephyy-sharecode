@@ -7,6 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { Card } from "@/components/ui/card";
 
+export const dynamic = 'force-dynamic';
+
 export default async function CategoryPage({ params }: { params: { category_slug: string } }) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -27,8 +29,8 @@ export default async function CategoryPage({ params }: { params: { category_slug
       id,
       title,
       created_at,
-      profiles!inner ( full_name, avatar_url ),
-      topic_stats!left ( post_count )
+      profiles ( full_name, avatar_url ),
+      forum_posts ( count )
     `)
     .eq('category_id', category.id)
     .order('created_at', { ascending: false });
@@ -54,19 +56,19 @@ export default async function CategoryPage({ params }: { params: { category_slug
         <div className="divide-y">
           {topics?.map((topic) => {
             const authorProfile = Array.isArray(topic.profiles) ? topic.profiles[0] : topic.profiles;
-            const stats = Array.isArray(topic.topic_stats) ? topic.topic_stats[0] : topic.topic_stats;
+            const postCount = topic.forum_posts[0]?.count || 0;
+            const replyCount = postCount > 0 ? postCount - 1 : 0;
             const authorInitial = authorProfile?.full_name?.charAt(0).toUpperCase() || 'A';
-            const replyCount = (stats?.post_count || 1) - 1;
 
             return (
               <div key={topic.id} className="p-4 flex items-center justify-between hover:bg-muted/50 transition-colors">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 min-w-0">
                   <Avatar>
                     <AvatarImage src={authorProfile?.avatar_url || ''} />
                     <AvatarFallback>{authorInitial}</AvatarFallback>
                   </Avatar>
-                  <div>
-                    <Link href={`/forums/topic/${topic.id}`} className="font-semibold text-lg hover:underline">
+                  <div className="flex-1 min-w-0">
+                    <Link href={`/forums/topic/${topic.id}`} className="font-semibold text-lg hover:underline truncate block">
                       {topic.title}
                     </Link>
                     <p className="text-sm text-muted-foreground">
@@ -74,15 +76,21 @@ export default async function CategoryPage({ params }: { params: { category_slug
                     </p>
                   </div>
                 </div>
-                <div className="hidden sm:flex items-center gap-6 text-center">
+                <div className="hidden sm:flex items-center gap-6 text-center ml-4">
                   <div>
-                    <div className="font-bold">{replyCount < 0 ? 0 : replyCount}</div>
+                    <div className="font-bold">{replyCount}</div>
                     <div className="text-sm text-muted-foreground">Replies</div>
                   </div>
                 </div>
               </div>
             );
           })}
+          {topics?.length === 0 && (
+            <div className="p-8 text-center text-muted-foreground">
+              <p>There are no topics in this category yet.</p>
+              <p>Be the first to start a discussion!</p>
+            </div>
+          )}
         </div>
       </Card>
     </div>
