@@ -5,6 +5,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ReplyForm } from "@/components/ReplyForm";
+import { DeleteTopicButton } from "@/components/DeleteTopicButton";
 
 function PostCard({ post, isOP = false }: { post: any, isOP?: boolean }) {
   const author = Array.isArray(post.profiles) ? post.profiles[0] : post.profiles;
@@ -58,14 +59,23 @@ export default async function TopicPage({ params }: { params: { topic_id: string
 
   const originalPost = posts?.[0];
   const replies = posts?.slice(1) || [];
+  const isOwner = user?.id === topic.user_id;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="space-y-2 mb-8">
-        <h1 className="text-4xl font-bold tracking-tighter break-words">{topic.title}</h1>
+      <div className="space-y-4 mb-8">
+        <div className="flex justify-between items-start">
+          <h1 className="text-4xl font-bold tracking-tighter break-words">{topic.title}</h1>
+          {isOwner && <DeleteTopicButton topicId={topic.id} />}
+        </div>
         <p className="text-muted-foreground">
           A topic started by {topic.profiles?.full_name || 'Anonymous'}
         </p>
+        {topic.image_url && (
+          <div className="relative aspect-video rounded-lg overflow-hidden border">
+            <img src={topic.image_url} alt={topic.title} className="w-full h-full object-cover" />
+          </div>
+        )}
       </div>
 
       <div className="space-y-8">
