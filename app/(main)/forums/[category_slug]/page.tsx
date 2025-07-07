@@ -27,8 +27,8 @@ export default async function CategoryPage({ params }: { params: { category_slug
       id,
       title,
       created_at,
-      profiles ( full_name, avatar_url ),
-      topic_stats ( post_count, last_reply_at )
+      profiles!inner ( full_name, avatar_url ),
+      topic_stats!left ( post_count )
     `)
     .eq('category_id', category.id)
     .order('created_at', { ascending: false });
@@ -51,14 +51,15 @@ export default async function CategoryPage({ params }: { params: { category_slug
       </div>
 
       <Card>
-        <div className="space-y-2">
+        <div className="divide-y">
           {topics?.map((topic) => {
             const authorProfile = Array.isArray(topic.profiles) ? topic.profiles[0] : topic.profiles;
             const stats = Array.isArray(topic.topic_stats) ? topic.topic_stats[0] : topic.topic_stats;
             const authorInitial = authorProfile?.full_name?.charAt(0).toUpperCase() || 'A';
+            const replyCount = (stats?.post_count || 1) - 1;
 
             return (
-              <div key={topic.id} className="p-4 flex items-center justify-between hover:bg-muted/50 rounded-lg transition-colors">
+              <div key={topic.id} className="p-4 flex items-center justify-between hover:bg-muted/50 transition-colors">
                 <div className="flex items-center gap-4">
                   <Avatar>
                     <AvatarImage src={authorProfile?.avatar_url || ''} />
@@ -75,7 +76,7 @@ export default async function CategoryPage({ params }: { params: { category_slug
                 </div>
                 <div className="hidden sm:flex items-center gap-6 text-center">
                   <div>
-                    <div className="font-bold">{(stats?.post_count || 1) - 1}</div>
+                    <div className="font-bold">{replyCount < 0 ? 0 : replyCount}</div>
                     <div className="text-sm text-muted-foreground">Replies</div>
                   </div>
                 </div>
