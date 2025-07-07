@@ -10,6 +10,37 @@ import { VoteComponent } from "@/components/VoteComponent";
 import { CommentSection } from "@/components/CommentSection";
 import { DeleteSnippetButton } from "@/components/DeleteSnippetButton";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Copy, Check } from "lucide-react";
+
+// Komponen baru khusus untuk membungkus blok kode dengan tombol copy
+function CodeBlockWrapper({ code, language }: { code: string, language: string }) {
+  "use client";
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(code);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  return (
+    <div className="relative group">
+      <Button
+        size="icon"
+        variant="ghost"
+        className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={handleCopyCode}
+      >
+        {isCopied ? <Check className="h-5 w-5 text-green-500" /> : <Copy className="h-5 w-5" />}
+      </Button>
+      <SyntaxHighlighter language={language.toLowerCase()} style={vscDarkPlus} customStyle={{ margin: 0, borderRadius: '0.5rem' }}>
+        {code}
+      </SyntaxHighlighter>
+    </div>
+  );
+}
+
 
 export const dynamic = 'force-dynamic';
 
@@ -36,25 +67,37 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
   if (!snippet) {
     notFound();
   }
-
-  const { data: votesData } = await supabase
-    .from('snippet_votes')
-    .select('score')
-    .eq('snippet_id', snippet.id)
-    .single();
   
-  const { data: userVoteData } = user ? await supabase
-    .from('votes')
-    .select('vote_type')
-    .eq('snippet_id', snippet.id)
-    .eq('user_id', user.id)
-    .single() : { data: null };
+  let initialVotesData = null;
+  if(snippet.is_public) {
+    const { data } = await supabase
+      .from('snippet_votes')
+      .select('score')
+      .eq('snippet_id', snippet.id)
+      .single();
+    initialVotesData = data;
+  }
+  
+  let userVoteData = null;
+  if(snippet.is_public && user) {
+    const { data } = await supabase
+      .from('votes')
+      .select('vote_type')
+      .eq('snippet_id', snippet.id)
+      .eq('user_id', user.id)
+      .single();
+    userVoteData = data;
+  }
 
-  const { data: commentsData } = await supabase
-    .from('comments')
-    .select('*, profiles(*)')
-    .eq('snippet_id', snippet.id)
-    .order('created_at', { ascending: false });
+  let commentsData = null;
+  if(snippet.is_public) {
+    const { data } = await supabase
+      .from('comments')
+      .select('*, profiles(*)')
+      .eq('snippet_id', snippet.id)
+      .order('created_at', { ascending: false });
+    commentsData = data;
+  }
 
   const profile = Array.isArray(snippet.profiles) ? snippet.profiles[0] : snippet.profiles;
   const userInitial = profile?.full_name?.charAt(0).toUpperCase() || 'A';
@@ -67,7 +110,7 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
            <h1 className="text-4xl font-bold tracking-tighter break-words">{snippet.title}</h1>
            <p className="text-xl text-muted-foreground">{snippet.description}</p>
            <div className="flex flex-wrap items-center gap-4 text-sm">
-            {snippet.is_public && profile && (
+            {(snippet.is_public && profile) && (
               <div className="flex items-center gap-2">
                 <Avatar className="w-8 h-8">
                   <AvatarImage src={profile.avatar_url || ''} />
@@ -81,23 +124,19 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
            </div>
         </div>
 
-        <div className="flex items-start gap-4">
+        <div className="flex flex-col md:flex-row items-start gap-4">
           {snippet.is_public && (
             <VoteComponent 
               snippetId={snippet.id} 
-              initialVotes={votesData?.score || 0}
+              initialVotes={initialVotesData?.score || 0}
               initialUserVote={userVoteData?.vote_type || 0}
               user={user} 
             />
           )}
           <div className="flex-1 w-full">
-            <Card className="shadow-subtle">
+            <Card className="shadow-subtle overflow-hidden">
               <CardContent className="p-0">
-                <div className="rounded-lg overflow-hidden bg-[#1E1E1E]">
-                  <SyntaxHighlighter language={snippet.language.toLowerCase()} style={vscDarkPlus} customStyle={{ margin: 0 }}>
-                    {snippet.code}
-                  </SyntaxHighlighter>
-                </div>
+                <CodeBlockWrapper code={snippet.code} language={snippet.language} />
               </CardContent>
             </Card>
           </div>
