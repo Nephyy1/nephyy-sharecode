@@ -19,7 +19,8 @@ export default function CreatePage() {
   const [description, setDescription] = useState('');
   const [language, setLanguage] = useState('');
   const [code, setCode] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLinkLoading, setIsLinkLoading] = useState(false);
+  const [isPublishLoading, setIsPublishLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -36,13 +37,22 @@ export default function CreatePage() {
     fetchUser();
   }, [supabase.auth]);
 
-  const handleSaveSnippet = async (isPublic: boolean) => {
+  const saveSnippet = async (isPublic: boolean) => {
+    if (!user) {
+      setShowLoginAlert(true);
+      return;
+    }
+    
     if (!title || !language || !code) {
       setError("Title, Language, and Code fields are required.");
       return;
     }
 
-    setIsLoading(true);
+    if(isPublic) {
+      setIsPublishLoading(true);
+    } else {
+      setIsLinkLoading(true);
+    }
     setError(null);
     setSuccess(null);
 
@@ -55,27 +65,24 @@ export default function CreatePage() {
         description,
         language,
         code,
-        user_id: user?.id || null,
+        user_id: user.id,
         is_public: isPublic,
         short_id: shortId,
       })
       .select('short_id')
       .single();
+    
+    if(isPublic) {
+      setIsPublishLoading(false);
+    } else {
+      setIsLinkLoading(false);
+    }
 
-    setIsLoading(false);
     if (insertError) {
       setError(insertError.message);
     } else if (data) {
-      setSuccess(isPublic ? "Snippet published successfully!" : "Link created successfully!");
+      setSuccess(isPublic ? "Snippet published!" : "Link created!");
       router.push(`/s/${data.short_id}`);
-    }
-  };
-
-  const handlePublishClick = () => {
-    if (user) {
-      handleSaveSnippet(true);
-    } else {
-      setShowLoginAlert(true);
     }
   };
 
@@ -86,7 +93,7 @@ export default function CreatePage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Authentication Required</AlertDialogTitle>
             <AlertDialogDescription>
-              You must be logged in to publish a snippet to the web. Please log in or create an account to continue.
+              To create a snippet, you must be logged in. Please log in or create an account to continue.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -102,7 +109,7 @@ export default function CreatePage() {
         <Card className="w-full max-w-4xl shadow-subtle">
           <CardHeader>
             <CardTitle className="text-2xl">Create a New Snippet</CardTitle>
-            <CardDescription>Choose to get a private shareable link or publish your code to the community.</CardDescription>
+            <CardDescription>Share your code with a private link or publish it to the community.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
@@ -149,12 +156,12 @@ export default function CreatePage() {
               {success && <p className="text-green-500 flex items-center gap-2"><CheckCircle className="w-4 h-4"/>{success}</p>}
             </div>
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-               <Button type="button" variant="outline" size="lg" onClick={() => handleSaveSnippet(false)} disabled={isLoading}>
-                {isLoading ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : <Link2 className="mr-2 h-4 w-4" />}
+               <Button type="button" variant="outline" size="lg" onClick={() => saveSnippet(false)} disabled={isLinkLoading || isPublishLoading}>
+                {isLinkLoading ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : <Link2 className="mr-2 h-4 w-4" />}
                 Create Share Link
               </Button>
-              <Button type="button" size="lg" className="btn-gradient" onClick={handlePublishClick} disabled={isLoading}>
-                {isLoading ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+              <Button type="button" size="lg" className="btn-gradient" onClick={() => saveSnippet(true)} disabled={isLinkLoading || isPublishLoading}>
+                {isPublishLoading ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
                 Publish to Web
               </Button>
             </div>
