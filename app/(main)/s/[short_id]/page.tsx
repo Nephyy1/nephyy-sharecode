@@ -2,13 +2,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { formatDistanceToNow } from 'date-fns';
 import { VoteComponent } from "@/components/VoteComponent";
 import { CommentSection } from "@/components/CommentSection";
 import { Badge } from "@/components/ui/badge";
 import { SnippetActionButtons } from "@/components/SnippetActionButtons";
+import { UserBadges } from "@/components/UserBadges";
 
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +27,7 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
       created_at,
       is_public,
       short_id,
-      profiles ( full_name, avatar_url )
+      profiles ( *, user_badges(*, badges(*)) )
     `)
     .eq('short_id', params.short_id)
     .single();
@@ -62,7 +61,7 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
   if(snippet.is_public) {
     const { data } = await supabase
       .from('comments')
-      .select('*, profiles(*)')
+      .select('*, profiles(*, user_badges(*, badges(*)))')
       .eq('snippet_id', snippet.id)
       .order('created_at', { ascending: false });
     commentsData = data;
@@ -89,6 +88,7 @@ export default async function SnippetDetailPage({ params }: { params: { short_id
                   <AvatarFallback>{userInitial}</AvatarFallback>
                 </Avatar>
                 <span className="font-medium">{profile.full_name || 'Anonymous'}</span>
+                <UserBadges badges={profile.user_badges || []} />
               </div>
             ) : (
               <div className="flex items-center gap-2">
