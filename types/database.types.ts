@@ -322,6 +322,7 @@ export type Database = {
           category_id_input: string
           title_input: string
           content_input: string
+          image_url_input?: string | null
         }
         Returns: string
       }
