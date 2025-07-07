@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { Check, Copy, Link as LinkIcon } from "lucide-react";
+import { Check, Copy, Link as LinkIcon, Edit } from "lucide-react";
 import { DeleteSnippetButton } from "./DeleteSnippetButton";
+import Link from "next/link";
 
-export function SnippetActionButtons({ code, isOwner, snippetId }: { code: string; isOwner: boolean; snippetId: string }) {
+export function SnippetActionButtons({ code, isOwner, snippetId, shortId }: { code: string; isOwner: boolean; snippetId: string; shortId: string | null }) {
   const [isCodeCopied, setIsCodeCopied] = useState(false);
   const [isLinkCopied, setIsLinkCopied] = useState(false);
   const [currentUrl, setCurrentUrl] = useState('');
@@ -35,7 +36,16 @@ export function SnippetActionButtons({ code, isOwner, snippetId }: { code: strin
       <Button variant="outline" size="icon" onClick={() => handleCopy('link')}>
         {isLinkCopied ? <Check className="h-4 w-4 text-green-500" /> : <LinkIcon className="h-4 w-4" />}
       </Button>
-      {isOwner && <DeleteSnippetButton snippetId={snippetId} />}
+      {isOwner && (
+        <>
+          <Button asChild variant="outline" size="icon">
+            <Link href={`/s/${shortId}/edit`}>
+              <Edit className="h-4 w-4" />
+            </Link>
+          </Button>
+          <DeleteSnippetButton snippetId={snippetId} />
+        </>
+      )}
     </div>
   );
 }
