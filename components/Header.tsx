@@ -1,74 +1,26 @@
-"use client";
-
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CodeXml, Menu, FilePlus2, WandSparkles, LogOut, User as UserIcon, Settings, Compass, MessagesSquare, ShieldCheck } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/server';
 import { UserNav } from './UserNav';
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { User } from '@supabase/supabase-js';
-import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { DropdownMenuSeparator } from './ui/dropdown-menu';
-import { useEffect, useState } from 'react';
-import { Tables } from '@/types/database.types';
 
-function LogoutButton() {
-  const router = useRouter();
+export default async function Header() {
   const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.refresh();
-  };
-
-  return (
-    <Button variant="ghost" className="w-full justify-start gap-3 text-lg py-6 px-3" onClick={handleSignOut}>
-      <LogOut className="w-5 h-5" />
-      <span>Log out</span>
-    </Button>
-  );
-}
-
-export default function Header() {
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Tables<'profiles'> | null>(null);
-  const [loading, setLoading] = useState(true);
-  const supabase = createClient();
-
-  useEffect(() => {
-    const fetchUserAndProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-
-      if (user) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-        setProfile(profileData);
-      }
-      setLoading(false);
-    };
-
-    fetchUserAndProfile();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      const newUser = session?.user ?? null;
-      setUser(newUser);
-      if(event === 'SIGNED_OUT') {
-        setProfile(null);
-      }
-      setLoading(false);
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
-
+  let profile = null;
+  if (user) {
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+    profile = profileData;
+  }
 
   const navItems = [
     { href: "/explore", label: "Explore", icon: <Compass className="w-5 h-5" /> },
@@ -110,7 +62,7 @@ export default function Header() {
 
         <div className="hidden md:flex items-center gap-3 ml-auto">
           <ThemeToggle />
-          {!loading && (user ? <UserNav user={user} profile={profile} /> : <AuthButtons />)}
+          {user ? <UserNav user={user} profile={profile} /> : <AuthButtons />}
         </div>
 
         <div className="md:hidden ml-auto flex items-center gap-2">
@@ -134,7 +86,7 @@ export default function Header() {
                 </SheetTitle>
               </SheetHeader>
 
-              <div className="p-4 flex-grow">
+              <div className="p-4 flex-grow overflow-y-auto">
                 <nav className="flex flex-col gap-2">
                   {navItems.map((item) => (
                     <SheetClose key={item.href} asChild>
@@ -146,7 +98,7 @@ export default function Header() {
                   ))}
                 </nav>
 
-                {!loading && user && (
+                {user && (
                   <>
                     <DropdownMenuSeparator className="my-4" />
                     <div className="px-3 text-lg font-semibold mb-2">Account</div>
@@ -170,16 +122,27 @@ export default function Header() {
                         <span>Settings</span>
                       </Link>
                     </SheetClose>
-                    <SheetClose asChild>
-                      <LogoutButton />
-                    </SheetClose>
                   </>
                 )}
               </div>
 
               <SheetFooter className="p-4 mt-auto border-t">
-                {!loading && !user && (
-                  <div className="flex flex-col gap-3">
+                {user ? (
+                   <div className="flex items-center gap-3 w-full">
+                      <Avatar>
+                        <AvatarImage src={profile?.avatar_url || ''} alt="User avatar" />
+                        <AvatarFallback>{userInitial}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col text-left overflow-hidden">
+                        <span className="text-sm font-medium truncate">{profile?.full_name}</span>
+                        <span className="text-xs text-muted-foreground truncate">{user.email}</span>
+                      </div>
+                      <div className="ml-auto">
+                        <UserNav user={user} profile={profile} />
+                      </div>
+                   </div>
+                ) : (
+                  <div className="flex flex-col gap-3 w-full">
                     <SheetClose asChild>
                       <Button variant="outline" className="w-full" asChild>
                         <Link href="/login">Login</Link>
@@ -191,18 +154,6 @@ export default function Header() {
                       </Button>
                     </SheetClose>
                   </div>
-                )}
-                {user && (
-                   <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src={profile?.avatar_url || ''} alt="User avatar" />
-                        <AvatarFallback>{userInitial}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col text-left">
-                        <span className="text-sm font-medium">{profile?.full_name}</span>
-                        <span className="text-xs text-muted-foreground">{user.email}</span>
-                      </div>
-                   </div>
                 )}
               </SheetFooter>
             </SheetContent>
