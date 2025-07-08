@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -20,7 +19,7 @@ import { deleteItem } from "@/app/admin/actions";
 
 type DeleteButtonProps = {
   itemId: string;
-  tableName: "snippets" | "forum_topics";
+  tableName: "snippets" | "forum_topics" | "badges";
   path: string;
 };
 
