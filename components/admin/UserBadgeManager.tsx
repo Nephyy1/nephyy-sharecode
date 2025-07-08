@@ -61,13 +61,13 @@ export function UserBadgeManager({ userId, allBadges, currentUserBadges }: UserB
       </CardHeader>
       <CardContent className="space-y-4">
         {allBadges.map((badge) => (
-          <div key={badge.id} className="flex items-center space-x-2">
+          <div key={badge.id} className="flex items-center space-x-3 rounded-lg border p-4">
             <Checkbox
               id={badge.id}
               checked={selectedBadges.has(badge.id)}
               onCheckedChange={(checked) => handleCheckboxChange(badge.id, !!checked)}
             />
-            <Label htmlFor={badge.id} className="w-full">
+            <Label htmlFor={badge.id} className="w-full cursor-pointer">
               <div className="font-semibold">{badge.name}</div>
               <p className="text-sm text-muted-foreground">{badge.description}</p>
             </Label>
