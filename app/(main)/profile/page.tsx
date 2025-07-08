@@ -1,17 +1,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
-import { Edit, ShieldCheck, Star, Baby } from "lucide-react";
+import { Edit, Code2, MessageSquare } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-
-const badgeIcons: { [key: string]: React.ReactNode } = {
-  Admin: <ShieldCheck className="w-4 h-4 mr-1.5" />,
-  Expert: <Star className="w-4 h-4 mr-1.5" />,
-  Rookie: <Baby className="w-4 h-4 mr-1.5" />,
-};
+import { UserBadges } from "@/components/UserBadges";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { formatDistanceToNow } from "date-fns";
 
 export default async function ProfilePage() {
   const supabase = createClient();
@@ -26,49 +22,87 @@ export default async function ProfilePage() {
     .select('*, user_badges(*, badges(*))')
     .eq('id', user.id)
     .single();
+  
+  const { data: snippets } = await supabase
+    .from('snippets')
+    .select('title, short_id, language, created_at')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+
+  const { data: topics } = await supabase
+    .from('forum_topics')
+    .select('title, id, created_at, forum_categories(title)')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
 
   const userInitial = profile?.full_name?.charAt(0).toUpperCase() || user.email!.charAt(0).toUpperCase();
-  const joinDate = new Date(user.created_at).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
 
   return (
-    <div className="flex justify-center items-start py-8 px-4">
-      <Card className="w-full max-w-2xl shadow-subtle">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div className="space-y-1.5">
-            <CardTitle className="text-2xl">My Profile</CardTitle>
-            <CardDescription>View and manage your profile details.</CardDescription>
+    <div className="container mx-auto max-w-4xl py-8 px-4">
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10 mb-12">
+        <Avatar className="w-32 h-32 text-5xl border-4 border-background shadow-lg">
+          <AvatarImage src={profile?.avatar_url || ''} alt="User avatar" />
+          <AvatarFallback>{userInitial}</AvatarFallback>
+        </Avatar>
+        <div className="flex-1 text-center md:text-left">
+          <h1 className="text-4xl font-bold tracking-tighter">{profile?.full_name || 'Anonymous User'}</h1>
+          <p className="text-lg text-muted-foreground mt-1">{user.email}</p>
+          <div className="flex justify-center md:justify-start flex-wrap gap-2 mt-4">
+            <UserBadges badges={profile?.user_badges || []} />
           </div>
-          <Button asChild variant="outline" size="icon">
+          <Button asChild variant="outline" className="mt-4">
             <Link href="/settings">
-              <Edit className="w-4 h-4" />
+              <Edit className="w-4 h-4 mr-2" />
+              Edit Profile
             </Link>
           </Button>
-        </CardHeader>
-        <CardContent className="mt-6">
-          <div className="flex items-center space-x-6">
-            <Avatar className="w-24 h-24 text-3xl">
-              <AvatarImage src={profile?.avatar_url || ''} alt="User avatar" />
-              <AvatarFallback>{userInitial}</AvatarFallback>
-            </Avatar>
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold">{profile?.full_name || 'No Name Set'}</h2>
-              <p className="text-muted-foreground">{user.email}</p>
-              <div className="flex flex-wrap gap-2 pt-1">
-                {profile?.user_badges.map(userBadge => (
-                  <Badge key={userBadge.badge_id} variant="secondary" className="flex items-center">
-                    {badgeIcons[userBadge.badges?.name || ''] || null}
-                    {userBadge.badges?.name}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      <Tabs defaultValue="snippets" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="snippets">My Snippets ({snippets?.length || 0})</TabsTrigger>
+          <TabsTrigger value="forums">My Forum Topics ({topics?.length || 0})</TabsTrigger>
+        </TabsList>
+        <TabsContent value="snippets">
+          <Card>
+            <CardContent className="p-4 space-y-4">
+              {snippets && snippets.length > 0 ? (
+                snippets.map(snippet => (
+                  <div key={snippet.short_id} className="flex justify-between items-center p-3 rounded-lg hover:bg-muted/50">
+                    <div>
+                      <Link href={`/s/${snippet.short_id}`} className="font-semibold hover:underline">{snippet.title}</Link>
+                      <p className="text-sm text-muted-foreground">{snippet.language} • {formatDistanceToNow(new Date(snippet.created_at), { addSuffix: true })}</p>
+                    </div>
+                    <Code2 className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-muted-foreground py-8">No snippets created yet.</p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="forums">
+          <Card>
+            <CardContent className="p-4 space-y-4">
+              {topics && topics.length > 0 ? (
+                topics.map(topic => (
+                  <div key={topic.id} className="flex justify-between items-center p-3 rounded-lg hover:bg-muted/50">
+                    <div>
+                      <Link href={`/forums/topic/${topic.id}`} className="font-semibold hover:underline">{topic.title}</Link>
+                      <p className="text-sm text-muted-foreground">{topic.forum_categories?.title} • {formatDistanceToNow(new Date(topic.created_at), { addSuffix: true })}</p>
+                    </div>
+                    <MessageSquare className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-muted-foreground py-8">No topics created yet.</p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
