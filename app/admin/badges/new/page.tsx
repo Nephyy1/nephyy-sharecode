@@ -19,12 +19,12 @@ export default function NewBadgePage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (state.success) {
+    if (state.success && typeof state.message === 'string') {
       toast.success(state.message);
       router.push('/admin/badges');
     } else if (state.message && typeof state.message !== 'string') {
       const errorMessages = Object.values(state.message).flat().join("\n");
-      toast.error(errorMessages);
+      toast.error(errorMessages || "An unknown validation error occurred.");
     } else if (state.message) {
       toast.error(state.message);
     }
