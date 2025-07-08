@@ -20,7 +20,9 @@ export default async function AdminBadgesPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Badge Management</h1>
-          <p className="text-muted-foreground">Create and manage all available badges.</p>
+          <p className="text-muted-foreground">
+            Create and manage all available badges in the system.
+          </p>
         </div>
         <Button asChild>
           <Link href="/admin/badges/new">
@@ -30,13 +32,17 @@ export default async function AdminBadgesPage() {
         </Button>
       </div>
       <Card>
+        <CardHeader>
+          <CardTitle>Available Badges</CardTitle>
+          <CardDescription>A list of all badges that can be assigned to users.</CardDescription>
+        </CardHeader>
         <CardContent className="pt-6">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[50px]">Icon</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Description</TableHead>
+                <TableHead className="hidden md:table-cell">Description</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -47,7 +53,7 @@ export default async function AdminBadgesPage() {
                     {badge.icon_name && badgeIcons[badge.icon_name]}
                   </TableCell>
                   <TableCell className="font-medium">{badge.name}</TableCell>
-                  <TableCell>{badge.description}</TableCell>
+                  <TableCell className="hidden md:table-cell">{badge.description}</TableCell>
                   <TableCell>
                     ...
                   </TableCell>
