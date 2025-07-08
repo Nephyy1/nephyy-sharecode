@@ -1,21 +1,9 @@
-import { AlertTriangle } from "lucide-react";
-
 export default function TermsOfServicePage() {
   return (
     <div className="container mx-auto max-w-3xl py-8 px-4">
       <div className="space-y-4 mb-12 text-center">
         <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">Terms of Service</h1>
         <p className="text-muted-foreground">Last updated: July 8, 2025</p>
-      </div>
-
-      <div className="flex items-start gap-4 p-4 mb-8 rounded-lg border border-yellow-300 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20">
-        <AlertTriangle className="h-6 w-6 text-yellow-600 dark:text-yellow-400 mt-1" />
-        <div className="flex-1">
-          <h3 className="font-semibold text-yellow-800 dark:text-yellow-300">Disclaimer</h3>
-          <p className="text-sm text-yellow-700 dark:text-yellow-400/80">
-            This is a template and not a legally binding agreement. Please replace this content with your own official Terms of Service.
-          </p>
-        </div>
       </div>
 
       <article className="prose prose-lg dark:prose-invert max-w-none">
