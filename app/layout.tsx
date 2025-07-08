@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
@@ -14,10 +14,6 @@ export const metadata: Metadata = {
   description: "The ultimate platform for developers to share code snippets, engage in live coding sessions, and get AI-powered feedback. Built by Nephyy.",
   authors: [{ name: "Nephyy" }],
   keywords: ["code sharing", "live coding, pair programming", "AI code review", "developer tools", "Nephyy"],
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0e1c" },
-  ],
   metadataBase: new URL('https://sharecode.nephyy.tech'),
   openGraph: {
     title: "Nephyy ShareCode",
@@ -44,6 +40,13 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0e1c" },
+  ],
 };
 
 export default function RootLayout({
