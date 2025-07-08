@@ -3,13 +3,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { format } from 'date-fns';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Settings } from "lucide-react";
 
 export default async function AdminUsersPage() {
   const supabase = createClient();
-  const { data: profiles } = await supabase.from('profiles').select('*, users(email)');
+  const { data: profiles } = await supabase.from('profiles').select('*');
 
   return (
     <Card>
@@ -23,6 +24,7 @@ export default async function AdminUsersPage() {
             <TableRow>
               <TableHead>User</TableHead>
               <TableHead className="hidden sm:table-cell">Role</TableHead>
+              <TableHead className="hidden md:table-cell">Joined At</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -43,11 +45,13 @@ export default async function AdminUsersPage() {
                     {profile.role}
                   </Badge>
                 </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {format(new Date(profile.updated_at || new Date()), "PPP")}
+                </TableCell>
                 <TableCell>
                   <Button asChild variant="outline" size="sm">
                     <Link href={`/admin/users/${profile.id}/manage`}>
-                      <Settings className="h-4 w-4 mr-2" />
-                      Manage
+                      <Settings className="h-4 w-4" />
                     </Link>
                   </Button>
                 </TableCell>
