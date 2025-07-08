@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Github, Twitter } from 'lucide-react';
+import { Instagram, Send } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -45,11 +45,11 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t flex flex-col sm:flex-row justify-between items-center text-sm text-muted-foreground">
           <p>Copyright © {new Date().getFullYear()} Nephyy</p>
           <div className="flex items-center gap-4 mt-4 sm:mt-0">
-            <a href="https://github.com/Nephyy1/nephyy-sharecode" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-              <Github className="w-5 h-5" />
+            <a href="https://instagram.com/shunsinee.x" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <Instagram className="w-5 h-5" />
             </a>
-            <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-              <Twitter className="w-5 h-5" />
+            <a href="https://t.me/NepSoHee" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <Send className="w-5 h-5" />
             </a>
           </div>
         </div>
