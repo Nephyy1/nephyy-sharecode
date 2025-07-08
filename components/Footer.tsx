@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CodeXml, Github, Twitter } from 'lucide-react';
+import { Github, Twitter } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -7,11 +7,8 @@ export default function Footer() {
       <div className="container mx-auto py-12 px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 font-bold text-lg w-fit">
-              <div className="p-2 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg text-white">
-                <CodeXml className="w-5 h-5" />
-              </div>
-              <span>Nephyy ShareCode</span>
+            <Link href="/" className="font-bold text-xl hover:text-primary transition-colors">
+              Nephyy ShareCode
             </Link>
             <p className="text-muted-foreground text-sm mt-4">
               Platform untuk developer berbagi kode, berdiskusi di forum, dan mendapatkan review AI.
@@ -39,14 +36,14 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold mb-4 text-foreground">Legal</h3>
             <nav className="flex flex-col gap-3">
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link>
+              <Link href="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link href="/terms-of-service" className="text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link>
             </nav>
           </div>
         </div>
         
         <div className="mt-12 pt-8 border-t flex flex-col sm:flex-row justify-between items-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Nephyy ShareCode. All Rights Reserved.</p>
+          <p>Copyright © {new Date().getFullYear()} Nephyy</p>
           <div className="flex items-center gap-4 mt-4 sm:mt-0">
             <a href="https://github.com/Nephyy1/nephyy-sharecode" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
               <Github className="w-5 h-5" />
