@@ -66,7 +66,10 @@ const badgeSchema = z.object({
   icon_name: z.string(),
 });
 
-export async function createBadge(formData: FormData) {
+export async function createBadge(
+  state: { message: any; success: boolean }, 
+  formData: FormData
+) {
   const validatedFields = badgeSchema.safeParse({
     name: formData.get('name'),
     description: formData.get('description'),
