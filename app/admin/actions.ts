@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 export async function deleteItem({
   id,
@@ -9,7 +10,7 @@ export async function deleteItem({
   path,
 }: {
   id: string;
-  tableName: "snippets" | "forum_topics";
+  tableName: "snippets" | "forum_topics" | "badges";
   path: string;
 }) {
   const supabase = createClient();
@@ -20,7 +21,7 @@ export async function deleteItem({
   }
 
   revalidatePath(path);
-  return { success: true, message: `${tableName} has been deleted.` };
+  return { success: true, message: `${tableName.slice(0, -1)} has been deleted.` };
 }
 
 export async function updateUserBadges({
@@ -57,4 +58,35 @@ export async function updateUserBadges({
 
   revalidatePath(`/admin/users`);
   return { success: true, message: "User badges updated successfully." };
+}
+
+const badgeSchema = z.object({
+  name: z.string().min(3, "Name must be at least 3 characters."),
+  description: z.string().min(10, "Description must be at least 10 characters."),
+  icon_name: z.string(),
+});
+
+export async function createBadge(formData: FormData) {
+  const validatedFields = badgeSchema.safeParse({
+    name: formData.get('name'),
+    description: formData.get('description'),
+    icon_name: formData.get('icon_name'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      message: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const supabase = createClient();
+  const { error } = await supabase.from('badges').insert(validatedFields.data);
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+  
+  revalidatePath('/admin/badges');
+  return { success: true, message: "Badge created successfully." };
 }
