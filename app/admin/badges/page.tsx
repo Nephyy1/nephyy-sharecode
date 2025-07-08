@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PlusCircle, ShieldCheck, Star, Baby, Edit } from "lucide-react";
+import { DeleteButton } from "@/components/admin/DeleteButton";
 
 const badgeIcons: { [key: string]: React.ReactNode } = {
   Admin: <ShieldCheck className="w-5 h-5 text-red-500" />,
@@ -53,9 +54,12 @@ export default async function AdminBadgesPage() {
                   <TableCell className="font-medium">{badge.name}</TableCell>
                   <TableCell className="hidden md:table-cell">{badge.description}</TableCell>
                   <TableCell className="text-right">
-                     <Button variant="ghost" size="icon" disabled>
-                        <Edit className="h-4 w-4" />
-                     </Button>
+                    <div className="flex justify-end gap-2">
+                       <Button variant="ghost" size="icon" disabled>
+                          <Edit className="h-4 w-4" />
+                       </Button>
+                       <DeleteButton itemId={badge.id} tableName="badges" path="/admin/badges" />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
