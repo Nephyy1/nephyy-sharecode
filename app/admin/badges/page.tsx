@@ -6,9 +6,9 @@ import Link from "next/link";
 import { PlusCircle, ShieldCheck, Star, Baby } from "lucide-react";
 
 const badgeIcons: { [key: string]: React.ReactNode } = {
-  Admin: <ShieldCheck className="w-5 h-5" />,
-  Expert: <Star className="w-5 h-5" />,
-  Rookie: <Baby className="w-5 h-5" />,
+  Admin: <ShieldCheck className="w-5 h-5 text-red-500" />,
+  Expert: <Star className="w-5 h-5 text-yellow-500" />,
+  Rookie: <Baby className="w-5 h-5 text-green-500" />,
 };
 
 export default async function AdminBadgesPage() {
@@ -20,9 +20,7 @@ export default async function AdminBadgesPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Badge Management</h1>
-          <p className="text-muted-foreground">
-            Manage all available badges in the system.
-          </p>
+          <p className="text-muted-foreground">Create and manage all available badges.</p>
         </div>
         <Button asChild>
           <Link href="/admin/badges/new">
@@ -32,15 +30,11 @@ export default async function AdminBadgesPage() {
         </Button>
       </div>
       <Card>
-        <CardHeader>
-          <CardTitle>Available Badges</CardTitle>
-          <CardDescription>A list of all badges that can be assigned to users.</CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Icon</TableHead>
+                <TableHead className="w-[50px]">Icon</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Actions</TableHead>
