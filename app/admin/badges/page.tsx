@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { PlusCircle, ShieldCheck, Star, Baby } from "lucide-react";
+import { PlusCircle, ShieldCheck, Star, Baby, Edit } from "lucide-react";
 
 const badgeIcons: { [key: string]: React.ReactNode } = {
   Admin: <ShieldCheck className="w-5 h-5 text-red-500" />,
@@ -17,14 +17,14 @@ export default async function AdminBadgesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold">Badge Management</h1>
           <p className="text-muted-foreground">
             Create and manage all available badges in the system.
           </p>
         </div>
-        <Button asChild>
+        <Button asChild className="w-full sm:w-auto">
           <Link href="/admin/badges/new">
             <PlusCircle className="mr-2 h-4 w-4" />
             Create New Badge
@@ -32,10 +32,6 @@ export default async function AdminBadgesPage() {
         </Button>
       </div>
       <Card>
-        <CardHeader>
-          <CardTitle>Available Badges</CardTitle>
-          <CardDescription>A list of all badges that can be assigned to users.</CardDescription>
-        </CardHeader>
         <CardContent className="pt-6">
           <Table>
             <TableHeader>
@@ -43,19 +39,23 @@ export default async function AdminBadgesPage() {
                 <TableHead className="w-[50px]">Icon</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead className="hidden md:table-cell">Description</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {badges?.map((badge) => (
                 <TableRow key={badge.id}>
                   <TableCell>
-                    {badge.icon_name && badgeIcons[badge.icon_name]}
+                    <div className="flex justify-center items-center">
+                      {badge.icon_name && badgeIcons[badge.icon_name]}
+                    </div>
                   </TableCell>
                   <TableCell className="font-medium">{badge.name}</TableCell>
                   <TableCell className="hidden md:table-cell">{badge.description}</TableCell>
-                  <TableCell>
-                    ...
+                  <TableCell className="text-right">
+                     <Button variant="ghost" size="icon" disabled>
+                        <Edit className="h-4 w-4" />
+                     </Button>
                   </TableCell>
                 </TableRow>
               ))}
