@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { SubmitButton } from "@/components/SubmitButton";
 
 export default function NewBadgePage() {
-  const initialState = { message: null, success: false };
+  const initialState = { message: "", success: false };
   const [state, dispatch] = useFormState(createBadge, initialState);
   const router = useRouter();
 
