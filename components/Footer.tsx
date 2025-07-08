@@ -1,58 +1,60 @@
 import Link from 'next/link';
-import { Mail, Phone, Github, Twitter } from 'lucide-react';
+import { CodeXml, Github, Twitter } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="border-t bg-background">
+    <footer className="border-t bg-card text-card-foreground">
       <div className="container mx-auto py-12 px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          <div className="flex flex-col gap-4 items-start">
-            <Link href="/" className="font-bold text-xl">
-              Nephyy ShareCode
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="flex items-center gap-2 font-bold text-lg w-fit">
+              <div className="p-2 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg text-white">
+                <CodeXml className="w-5 h-5" />
+              </div>
+              <span>Nephyy ShareCode</span>
             </Link>
-            <p className="text-muted-foreground text-sm">
-              Platform modern untuk berbagi, berkolaborasi, dan me-review kode dengan mudah.
+            <p className="text-muted-foreground text-sm mt-4">
+              Platform untuk developer berbagi kode, berdiskusi di forum, dan mendapatkan review AI.
             </p>
           </div>
           
           <div>
-            <h3 className="font-semibold mb-4 text-foreground">Sitemap</h3>
+            <h3 className="font-semibold mb-4 text-foreground">Features</h3>
             <nav className="flex flex-col gap-3">
               <Link href="/create" className="text-muted-foreground hover:text-primary transition-colors">Create Snippet</Link>
-              <Link href="/live" className="text-muted-foreground hover:text-primary transition-colors">Live Coding</Link>
+              <Link href="/explore" className="text-muted-foreground hover:text-primary transition-colors">Explore Snippets</Link>
               <Link href="/review" className="text-muted-foreground hover:text-primary transition-colors">AI Review</Link>
             </nav>
           </div>
           
           <div>
-            <h3 className="font-semibold mb-4 text-foreground">Contact Us</h3>
-            <div className="flex flex-col gap-3 text-sm">
-              <a href="mailto:support@nephyy.tech" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-                <Mail className="w-4 h-4" />
-                <span>support@nephyy.tech</span>
-              </a>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Phone className="w-4 h-4" />
-                <span>+7-999-246-1528</span>
-              </div>
-            </div>
+            <h3 className="font-semibold mb-4 text-foreground">Community</h3>
+            <nav className="flex flex-col gap-3">
+              <Link href="/forums" className="text-muted-foreground hover:text-primary transition-colors">Forums</Link>
+              <Link href="/profile" className="text-muted-foreground hover:text-primary transition-colors">My Profile</Link>
+              <Link href="/settings" className="text-muted-foreground hover:text-primary transition-colors">Settings</Link>
+            </nav>
           </div>
-          
+
           <div>
-            <h3 className="font-semibold mb-4 text-foreground">Get Connected</h3>
-            <div className="flex items-center gap-4">
-              <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                <Github className="w-6 h-6" />
-              </a>
-              <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="w-6 h-6" />
-              </a>
-            </div>
+            <h3 className="font-semibold mb-4 text-foreground">Legal</h3>
+            <nav className="flex flex-col gap-3">
+              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link>
+            </nav>
           </div>
         </div>
         
-        <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Nephyy ShareCode. All Rights Reserved by Nephyy.</p>
+        <div className="mt-12 pt-8 border-t flex flex-col sm:flex-row justify-between items-center text-sm text-muted-foreground">
+          <p>© {new Date().getFullYear()} Nephyy ShareCode. All Rights Reserved.</p>
+          <div className="flex items-center gap-4 mt-4 sm:mt-0">
+            <a href="https://github.com/Nephyy1/nephyy-sharecode" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <Github className="w-5 h-5" />
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <Twitter className="w-5 h-5" />
+            </a>
+          </div>
         </div>
       </div>
     </footer>
