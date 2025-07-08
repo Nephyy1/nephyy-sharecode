@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Settings } from "lucide-react";
 import { PaginationControls } from "@/components/admin/PaginationControls";
+import { format } from "date-fns";
 
 export default async function AdminUsersPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   const supabase = createClient();
@@ -17,7 +18,8 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: {
   const end = start + per_page - 1;
 
   const { data: profiles, count } = await supabase.from('profiles')
-    .select('*, users(email)', { count: 'exact' })
+    .select('*', { count: 'exact' })
+    .order('updated_at', { ascending: false })
     .range(start, end);
 
   return (
@@ -33,6 +35,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: {
               <TableRow>
                 <TableHead>User</TableHead>
                 <TableHead className="hidden sm:table-cell">Role</TableHead>
+                <TableHead className="hidden md:table-cell">Last Updated</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -52,6 +55,9 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: {
                     <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'}>
                       {profile.role}
                     </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {format(new Date(profile.updated_at || new Date()), "PPP")}
                   </TableCell>
                   <TableCell>
                     <Button asChild variant="outline" size="sm">
