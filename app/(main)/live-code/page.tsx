@@ -68,66 +68,73 @@ export default function LiveCodePage() {
   return (
     <div className="container mx-auto max-w-7xl py-8 px-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-zinc-900 rounded-lg shadow-2xl h-full flex flex-col min-h-[600px]">
-          <div className="bg-zinc-800/80 px-4 py-2 flex items-center justify-between rounded-t-lg border-b border-zinc-700">
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-red-500"></span>
-              <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
-              <span className="w-3 h-3 rounded-full bg-green-500"></span>
-            </div>
-            <div className="w-48">
-              <Select value={language} onValueChange={handleLanguageChange}>
-                <SelectTrigger id="language" className="h-8 bg-zinc-700 border-zinc-600 text-white">
-                  <SelectValue placeholder="Select Language" />
-                </SelectTrigger>
-                <SelectContent>
-                  {languageOptions.map((lang) => (
-                    <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <Button onClick={handleRunCode} disabled={isLoading} className="btn-gradient h-8 px-4">
-              {isLoading ? (
-                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Play className="mr-2 h-4 w-4" />
-              )}
-              Run
-            </Button>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="language">Language</Label>
+            <Select value={language} onValueChange={handleLanguageChange}>
+              <SelectTrigger id="language">
+                <SelectValue placeholder="Select Language" />
+              </SelectTrigger>
+              <SelectContent>
+                {languageOptions.map((lang) => (
+                  <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <div className="flex-grow rounded-b-lg overflow-hidden">
-            <Editor
-              height="100%"
-              language={language}
-              theme="vs-dark"
-              value={code}
-              onChange={handleEditorChange}
-              options={{
-                fontSize: 14,
-                minimap: { enabled: false },
-                contextmenu: false,
-                scrollBeyondLastLine: false,
-              }}
-            />
+
+          <div className="bg-zinc-900 rounded-lg shadow-2xl flex flex-col min-h-[550px]">
+            <div className="bg-zinc-800/80 px-4 py-2 flex items-center justify-between rounded-t-lg border-b border-zinc-700">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-red-500"></span>
+                <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
+                <span className="w-3 h-3 rounded-full bg-green-500"></span>
+              </div>
+              <span className="text-sm text-zinc-400">Editor</span>
+              <Button onClick={handleRunCode} disabled={isLoading} className="btn-gradient h-8 px-4">
+                {isLoading ? (
+                  <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Play className="mr-2 h-4 w-4" />
+                )}
+                Run
+              </Button>
+            </div>
+            <div className="flex-grow rounded-b-lg overflow-hidden">
+              <Editor
+                height="100%"
+                language={language}
+                theme="vs-dark"
+                value={code}
+                onChange={handleEditorChange}
+                options={{
+                  fontSize: 14,
+                  minimap: { enabled: false },
+                  contextmenu: false,
+                  scrollBeyondLastLine: false,
+                }}
+              />
+            </div>
           </div>
         </div>
         
-        <div className="bg-zinc-900 rounded-lg shadow-2xl h-full flex flex-col min-h-[600px]">
-          <div className="bg-zinc-800/80 px-4 py-2 flex items-center justify-between rounded-t-lg border-b border-zinc-700">
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-red-500"></span>
-              <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
-              <span className="w-3 h-3 rounded-full bg-green-500"></span>
+        <div className="flex flex-col">
+           <div className="bg-zinc-900 rounded-lg shadow-2xl h-full flex flex-col min-h-[600px]">
+            <div className="bg-zinc-800/80 px-4 py-2 flex items-center justify-between rounded-t-lg border-b border-zinc-700">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-red-500"></span>
+                <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
+                <span className="w-3 h-3 rounded-full bg-green-500"></span>
+              </div>
+              <span className="text-sm text-zinc-400">Console Output</span>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleCopyOutput}>
+                {isCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4 text-zinc-400" />}
+              </Button>
             </div>
-            <span className="text-sm text-zinc-400">Console Output</span>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleCopyOutput}>
-              {isCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4 text-zinc-400" />}
-            </Button>
+            <pre className="w-full flex-grow p-4 overflow-auto text-sm text-white whitespace-pre-wrap break-words">
+              <code>{output}</code>
+            </pre>
           </div>
-          <pre className="w-full flex-grow p-4 overflow-auto text-sm text-white whitespace-pre-wrap break-words">
-            <code>{output}</code>
-          </pre>
         </div>
       </div>
     </div>
