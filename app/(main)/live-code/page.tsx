@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
-import { LoaderCircle, Play } from "lucide-react";
+import { LoaderCircle, Play, Copy, Check } from "lucide-react";
 import { Editor } from "@monaco-editor/react";
 
 const languageOptions = [
@@ -17,8 +17,9 @@ const languageOptions = [
 export default function LiveCodePage() {
   const [code, setCode] = useState(languageOptions[0].defaultCode);
   const [language, setLanguage] = useState(languageOptions[0].value);
-  const [output, setOutput] = useState("");
+  const [output, setOutput] = useState("Click 'Run Code' to see the output here.");
   const [isLoading, setIsLoading] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const handleLanguageChange = (value: string) => {
     const selectedLanguage = languageOptions.find(opt => opt.value === value);
@@ -49,8 +50,7 @@ export default function LiveCodePage() {
       });
 
       const result = await response.json();
-      setOutput(result.output);
-
+      setOutput(result.output || 'Execution finished with no output.');
     } catch (error) {
       setOutput("Failed to run code. Please try again later.");
     } finally {
@@ -58,10 +58,18 @@ export default function LiveCodePage() {
     }
   };
 
+  const handleCopyOutput = () => {
+    if(output && !isLoading) {
+      navigator.clipboard.writeText(output);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    }
+  };
+
   return (
     <div className="container mx-auto max-w-7xl py-8 px-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="space-y-6">
+        <div>
           <Card className="flex flex-col h-full">
             <CardHeader>
               <CardTitle>Live Code Editor</CardTitle>
@@ -110,18 +118,23 @@ export default function LiveCodePage() {
           </Card>
         </div>
         
-        <div className="space-y-6">
-          <Card className="h-full">
-            <CardHeader>
-              <CardTitle>Console Output</CardTitle>
-              <CardDescription>The result of your code execution will appear here.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <pre className="w-full h-full min-h-[500px] bg-zinc-900 text-white rounded-md p-4 overflow-auto text-sm whitespace-pre-wrap break-words">
-                <code>{output}</code>
-              </pre>
-            </CardContent>
-          </Card>
+        <div>
+           <div className="bg-zinc-900 rounded-lg shadow-2xl h-full flex flex-col">
+            <div className="bg-zinc-800/80 px-4 py-2 flex items-center justify-between rounded-t-lg border-b border-zinc-700">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-red-500"></span>
+                <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
+                <span className="w-3 h-3 rounded-full bg-green-500"></span>
+              </div>
+              <span className="text-sm text-zinc-400">Console Output</span>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleCopyOutput}>
+                {isCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4 text-zinc-400" />}
+              </Button>
+            </div>
+            <pre className="w-full flex-grow p-4 overflow-auto text-sm text-white whitespace-pre-wrap break-words">
+              <code>{output}</code>
+            </pre>
+          </div>
         </div>
       </div>
     </div>
