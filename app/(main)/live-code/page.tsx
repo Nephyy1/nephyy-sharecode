@@ -90,7 +90,7 @@ export default function LiveCodePage() {
                 <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
                 <span className="w-3 h-3 rounded-full bg-green-500"></span>
               </div>
-              <span className="text-sm text-zinc-400">Editor</span>
+              <span className="text-sm text-zinc-400 hidden sm:block">Editor</span>
               <Button onClick={handleRunCode} disabled={isLoading} className="btn-gradient h-8 px-4">
                 {isLoading ? (
                   <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
