@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CodeXml, Menu, FilePlus2, WandSparkles, LogOut, User as UserIcon, Settings, Compass, MessagesSquare, ShieldCheck } from 'lucide-react';
+import { CodeXml, Menu, FilePlus2, LogOut, User as UserIcon, Settings, Compass, MessagesSquare, ShieldCheck, TerminalSquare } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { createClient } from '@/lib/supabase/client';
 import { UserNav } from './UserNav';
@@ -74,7 +74,7 @@ export default function Header() {
     { href: "/explore", label: "Explore", icon: <Compass className="w-5 h-5" /> },
     { href: "/forums", label: "Forums", icon: <MessagesSquare className="w-5 h-5" /> },
     { href: "/create", label: "Create", icon: <FilePlus2 className="w-5 h-5" /> },
-    { href: "/review", label: "Review", icon: <WandSparkles className="w-5 h-5" /> },
+    { href: "/live-code", label: "Live Code", icon: <TerminalSquare className="w-5 h-5" /> },
   ];
 
   const AuthButtons = () => (
@@ -146,7 +146,7 @@ export default function Header() {
                   ))}
                 </nav>
 
-                {!loading && user && (
+                {user && (
                   <>
                     <DropdownMenuSeparator className="my-4" />
                     <div className="px-3 text-lg font-semibold mb-2">Account</div>
@@ -169,9 +169,6 @@ export default function Header() {
                         <Settings className="w-5 h-5" />
                         <span>Settings</span>
                       </Link>
-                    </SheetClose>
-                    <SheetClose asChild>
-                      <LogoutButton />
                     </SheetClose>
                   </>
                 )}
