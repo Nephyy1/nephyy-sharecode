@@ -20,7 +20,7 @@ import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Tables } from "@/types/database.types";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, LogOut } from "lucide-react";
 
 type UserNavProps = {
   user: User;
@@ -69,16 +69,17 @@ export function UserNav({ user, profile }: UserNavProps) {
           </DropdownMenuItem>
           {profile?.role === 'admin' && (
             <DropdownMenuItem asChild>
-              <Link href="/admin">
-                <ShieldCheck className="mr-2 h-4 w-4" />
+              <Link href="/admin" className="flex items-center justify-between">
                 <span>Admin</span>
+                <ShieldCheck className="h-4 w-4" />
               </Link>
             </DropdownMenuItem>
           )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignOut}>
-          Log out
+        <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
