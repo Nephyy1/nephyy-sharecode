@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CodeXml, Menu, FilePlus2, WandSparkles, LogOut, User as UserIcon, Settings, Compass, MessagesSquare, ShieldCheck } from 'lucide-react';
+import { CodeXml, Menu, FilePlus2, WandSparkles, LogOut, User as UserIcon, Settings, Compass, MessagesSquare, ShieldCheck, TerminalSquare } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { createClient } from '@/lib/supabase/server';
 import { UserNav } from './UserNav';
