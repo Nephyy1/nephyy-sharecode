@@ -2,11 +2,11 @@
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { LoaderCircle, Play } from "lucide-react";
+import { Editor } from "@monaco-editor/react";
 
 const languageOptions = [
   { value: "javascript", label: "JavaScript" },
@@ -22,6 +22,10 @@ export default function LiveCodePage() {
   const [language, setLanguage] = useState("javascript");
   const [output, setOutput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleEditorChange = (value: string | undefined) => {
+    setCode(value || "");
+  };
   
   const handleRunCode = async () => {
     setIsLoading(true);
@@ -53,12 +57,12 @@ export default function LiveCodePage() {
     <div className="container mx-auto max-w-6xl py-8 px-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
-          <Card>
+          <Card className="flex flex-col h-full">
             <CardHeader>
               <CardTitle>Live Code Editor</CardTitle>
               <CardDescription>Write and execute your code directly in the browser.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="flex-grow flex flex-col gap-4">
               <div className="space-y-2">
                 <Label htmlFor="language">Language</Label>
                 <Select value={language} onValueChange={setLanguage}>
@@ -72,15 +76,19 @@ export default function LiveCodePage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="code-area">Your Code</Label>
-                <Textarea
-                  id="code-area"
-                  placeholder="Enter your code here..."
-                  className="min-h-[400px] font-mono text-sm bg-zinc-900 text-white dark:bg-zinc-800"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                />
+              <div className="flex-grow rounded-lg overflow-hidden border">
+                 <Editor
+                    height="100%"
+                    language={language}
+                    theme="vs-dark"
+                    value={code}
+                    onChange={handleEditorChange}
+                    options={{
+                      fontSize: 14,
+                      minimap: { enabled: false },
+                      contextmenu: false,
+                    }}
+                  />
               </div>
             </CardContent>
              <CardFooter className="flex justify-end">
@@ -103,7 +111,7 @@ export default function LiveCodePage() {
               <CardDescription>The result of your code execution will appear here.</CardDescription>
             </CardHeader>
             <CardContent>
-              <pre className="w-full h-[480px] bg-zinc-900 text-white rounded-md p-4 overflow-y-auto text-sm">
+              <pre className="w-full h-[540px] bg-zinc-900 text-white rounded-md p-4 overflow-y-auto text-sm">
                 <code>{output}</code>
               </pre>
             </CardContent>
