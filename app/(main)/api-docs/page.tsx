@@ -12,7 +12,7 @@ export default function ApiDocsPage() {
   };
 
   const curlExample = `curl -X POST 'https://sharecode.nephyy.tech/api/snippets' \\
--H 'Authorization: Bearer YOUR_SUPABASE_JWT' \\
+-H 'Authorization: Bearer YOUR_STATIC_API_KEY' \\
 -H 'Content-Type: application/json' \\
 -d '${JSON.stringify(requestBody, null, 2)}'`;
 
@@ -35,16 +35,16 @@ export default function ApiDocsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2 space-y-10">
           <section>
-            <h2 className="text-2xl font-bold border-b pb-2 mb-4">Introduction</h2>
+            <h2 className="text-2xl font-bold border-b pb-2 mb-4">Authentication</h2>
             <p className="text-muted-foreground">
-              Our API allows you to programmatically create private code snippets. To use the API, you need to authenticate by providing your Supabase JWT as a Bearer token in the Authorization header. This token is obtained when a user logs into your application.
+              To use the API, you need a static API Key. Include this key in the Authorization header with the "Bearer" scheme. You can request a key from the site administrator.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-bold border-b pb-2 mb-4">Create Snippet</h2>
             <p className="text-muted-foreground mb-4">
-              This endpoint allows you to create a new private snippet.
+              This endpoint allows you to create a new private snippet on behalf of your user account.
             </p>
             <div className="flex items-center gap-2">
               <Badge>POST</Badge>
