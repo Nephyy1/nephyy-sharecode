@@ -11,12 +11,29 @@ const snippetSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: "Authentication required. Please provide a valid API key or log in." }, { status: 401 });
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return NextResponse.json({ error: "Missing or invalid Authorization header." }, { status: 401 });
   }
+
+  const apiKey = authHeader.split(' ')[1];
+  if (!apiKey) {
+    return NextResponse.json({ error: "API Key is missing." }, { status: 401 });
+  }
+  
+  const supabase = createClient();
+
+  const { data: apiKeyData, error: apiKeyError } = await supabase
+    .from('api_keys')
+    .select('user_id')
+    .eq('api_key', apiKey)
+    .single();
+
+  if (apiKeyError || !apiKeyData) {
+     return NextResponse.json({ error: "Invalid API Key." }, { status: 401 });
+  }
+  
+  const userId = apiKeyData.user_id;
 
   try {
     const json = await request.json();
@@ -36,7 +53,7 @@ export async function POST(request: Request) {
         description,
         language,
         code,
-        user_id: user.id,
+        user_id: userId,
         is_public: false,
         short_id: shortId,
       })
