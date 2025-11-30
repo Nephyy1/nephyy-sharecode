@@ -415,8 +415,15 @@ export type Database = {
         }
         Returns: string
       }
+      handle_new_user: {
+        Args: Record<PropertyKey, never>
+        Returns: Record<string, unknown>
+      }
     }
     Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
       [_ in never]: never
     }
   }
@@ -503,4 +510,3 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
-      
