@@ -1,4 +1,4 @@
-export type Json =
+ export type Json =
   | string
   | number
   | boolean
@@ -58,7 +58,7 @@ export type Database = {
           description?: string | null
           icon_name?: string | null
           id?: string
-          name?: string
+          name: string
         }
         Relationships: []
       }
@@ -406,6 +406,12 @@ export type Database = {
       }
     }
     Functions: {
+      assign_rookie_badge: {
+        Args: {
+          user_id_input: string
+        }
+        Returns: undefined
+      }
       create_new_topic: {
         Args: {
           category_id_input: string
@@ -510,3 +516,4 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
+      
